@@ -1,0 +1,91 @@
+      ******************************************************************
+      * DCLGEN TABLE(DANAGRAF.TTEMPITRANS)                             *
+      *        LIBRARY(MTTEST.SOURCE.LIBTEST(FDANA839))                *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(A839-)                                            *
+      *        QUOTE                                                   *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE DANAGRAF.TTEMPITRANS TABLE
+           ( CODUTENT                       CHAR(6) NOT NULL,
+             CODITRAN                       CHAR(4) NOT NULL,
+             CODIFUNZ                       CHAR(2) NOT NULL,
+             INILAVOR                       CHAR(4) NOT NULL,
+             CODSOCIE                       CHAR(2) NOT NULL,
+             CODDEPOS                       CHAR(2) NOT NULL,
+             NOTENOTE                       CHAR(60) NOT NULL,
+             NOTENOT1                       CHAR(200) NOT NULL,
+             FILLA200                       CHAR(200) NOT NULL,
+             FILLB200                       CHAR(200) NOT NULL,
+             FILLC200                       CHAR(200) NOT NULL,
+             FILLD200                       CHAR(200) NOT NULL,
+             FILLE200                       CHAR(200) NOT NULL,
+             FILLF200                       CHAR(200) NOT NULL,
+             FILLG200                       CHAR(200) NOT NULL,
+             FILLH200                       CHAR(200) NOT NULL,
+             FILLI200                       CHAR(200) NOT NULL,
+             FILLJ200                       CHAR(200) NOT NULL,
+             FILLK200                       CHAR(200) NOT NULL,
+             FILLL200                       CHAR(200) NOT NULL,
+             FILLM200                       CHAR(200) NOT NULL,
+             FILLN200                       CHAR(200) NOT NULL,
+             FILLO200                       CHAR(200) NOT NULL,
+             DTCREAZI                       CHAR(8) NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE DANAGRAF.TTEMPITRANS               *
+      ******************************************************************
+       01  DCLTTEMPITRANS.
+      *                       CODUTENT
+           10 A839-CODUTENT        PIC X(6).
+      *                       CODITRAN
+           10 A839-CODITRAN        PIC X(4).
+      *                       CODIFUNZ
+           10 A839-CODIFUNZ        PIC X(2).
+      *                       INILAVOR
+           10 A839-INILAVOR        PIC X(4).
+      *                       CODSOCIE
+           10 A839-CODSOCIE        PIC X(2).
+      *                       CODDEPOS
+           10 A839-CODDEPOS        PIC X(2).
+      *                       NOTENOTE
+           10 A839-NOTENOTE        PIC X(60).
+      *                       NOTENOT1
+           10 A839-NOTENOT1        PIC X(200).
+      *                       FILLA200
+           10 A839-FILLA200        PIC X(200).
+      *                       FILLB200
+           10 A839-FILLB200        PIC X(200).
+      *                       FILLC200
+           10 A839-FILLC200        PIC X(200).
+      *                       FILLD200
+           10 A839-FILLD200        PIC X(200).
+      *                       FILLE200
+           10 A839-FILLE200        PIC X(200).
+      *                       FILLF200
+           10 A839-FILLF200        PIC X(200).
+      *                       FILLG200
+           10 A839-FILLG200        PIC X(200).
+      *                       FILLH200
+           10 A839-FILLH200        PIC X(200).
+      *                       FILLI200
+           10 A839-FILLI200        PIC X(200).
+      *                       FILLJ200
+           10 A839-FILLJ200        PIC X(200).
+      *                       FILLK200
+           10 A839-FILLK200        PIC X(200).
+      *                       FILLL200
+           10 A839-FILLL200        PIC X(200).
+      *                       FILLM200
+           10 A839-FILLM200        PIC X(200).
+      *                       FILLN200
+           10 A839-FILLN200        PIC X(200).
+      *                       FILLO200
+           10 A839-FILLO200        PIC X(200).
+      *                       DTCREAZI
+           10 A839-DTCREAZI        PIC X(8).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 24      *
+      ******************************************************************

@@ -1,0 +1,16 @@
+      ********************     DCMESS           ************************
+      *********  COPY PER ESECUZIONE DELLA SUBROUTINE SRMESS     *******
+      *********  GESTIONE MESSAGGI DI ERRORE TP/BATCH            *******
+      ******************************************************************
+
+       01  DCMESS.
+           05  MESS-CAMPI-INPUT.
+               10  MESS-CODERROR      PIC X(5)       VALUE SPACES.
+               10  MESS-CODILING      PIC X(1)       VALUE SPACES.
+
+           05  MESS-CAMPI-OUTPUT.
+               10  MESS-MSGERROR.
+                   15  MESS-COMCODER  PIC X(5)       VALUE SPACES.
+                   15  FILLER         PIC X          VALUE SPACES.
+                   15  MESS-MESSAGGI  PIC X(66)      VALUE SPACES.
+

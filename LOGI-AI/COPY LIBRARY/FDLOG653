@@ -1,0 +1,23 @@
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE DLOGISTI.TRIGORDILOGI              *
+      ******************************************************************
+       01  DCLTRIGORDILOGI.
+           10 L653-AANUMORD        PIC X(8).
+           10 L653-NRRIGORD        PIC S9(5)V USAGE COMP-3.
+           10 L653-CODSERVI        PIC X(6).
+           10 L653-UNMISURA        PIC X(2).
+           10 L653-QTAORDIN        PIC S9(7)V9(2) USAGE COMP-3.
+           10 L653-PREZZORD        PIC S9(7)V9(4) USAGE COMP-3.
+           10 L653-IMPORDIN        PIC S9(11)V9(2) USAGE COMP-3.
+           10 L653-NOTENOTE        PIC X(40).
+           10 L653-CENCOSTD        PIC X(5).
+           10 L653-CENCOSTA        PIC X(5).
+           10 L653-RIFECLIE        PIC X(15).
+           10 L653-DTCREAZI        PIC X(8).
+           10 L653-DTULTVAR        PIC X(8).
+           10 L653-CODUTVAR        PIC X(6).
+           10 L653-DTANNULL        PIC X(8).
+           10 L653-IMPORIVA        PIC S9(11)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 16      *
+      ******************************************************************

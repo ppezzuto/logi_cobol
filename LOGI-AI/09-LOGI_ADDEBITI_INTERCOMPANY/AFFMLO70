@@ -1,0 +1,62 @@
+//AFFMLO70 JOB (AIACA,N),FATTURE.INSERIMENT,
+//         COND=(0,LT),CLASS=A,MSGCLASS=1,REGION=20M,USER=GESTMIR
+/*ROUTE PRINT MT                                                        00062905
+//JOBLIB DD DSN=DB210L.V10R1M0.SDSNLOAD,DISP=SHR
+//* --------------------------------------------------
+//*        DB2-LOGI
+//*            CREAZIONE FILE PER ZFIN_ACC_POSTIN FIN008
+//*            RATEI LOGI PER INTERCOMPANY 33020
+//* --------------------------------------------------
+//STEP0000  EXEC PGM=IDCAMS
+//SYSPRINT DD  SYSOUT=*
+//SYSIN    DD  *
+ DELETE  SEMI.RATEILOGI.AFFMLO70                SCRATCH PURGE
+ IF MAXCC>=0 THEN SET LASTCC=0
+ IF LASTCC>=0 THEN SET MAXCC=0
+//*
+//* --------------------------------------------------
+//STEP0010 EXEC PGM=IKJEFT01
+//*        -AVBGT30
+//*
+//STEPLIB  DD DSN=MIRO.BATCHLIB.MVS,DISP=SHR
+//*        DD DUMMY=STEPLIB.LIBERA
+//*
+//GTF008   DD DSN=SEMI.RATEILOGI.AFFMLO70,
+//            UNIT=3390,
+//            SPACE=(6144,(600,1200),RLSE),
+//            DCB=(LRECL=494,BLKSIZE=0,RECFM=FB),
+//            DISP=(NEW,CATLG,DELETE)
+//STIMPA   DD SYSOUT=1
+//SYSOUT   DD SYSOUT=1
+//SYSTSPRT DD SYSOUT=1
+//SYSPRINT DD SYSOUT=1
+//SYSUDUMP DD SYSOUT=H
+//SYSABEND DD SYSOUT=H
+//CARD     DD *
+//*
+//SYSTSIN  DD *
+ DSN SYSTEM(DB2M)
+ RUN PROGRAM(AVBGT30) PLAN(PLANMTBA)
+//*
+//* --------------------------------------------------
+//STEP0020 EXEC PGM=SORT
+//*
+//SYSOUT   DD SYSOUT=1
+//SORTIN   DD DSN=SEMI.RATEILOGI.AFFMLO70,DISP=SHR
+//SORTOUT  DD DSN=SEMI.RATEILOGI.AFFMLO70.MOD.L494,DISP=MOD,
+//            DCB=(BLKSIZE=0,LRECL=494,RECFM=FB)
+//SORTWK01 DD UNIT=SYSDA,SPACE=(6144,(600,600),RLSE)
+//SORTWK02 DD UNIT=SYSDA,SPACE=(6144,(600,600),RLSE)
+//SORTWK03 DD UNIT=SYSDA,SPACE=(6144,(600,600),RLSE)
+//SYSIN    DD *                                                         00001600
+ OPTION COPY                                                            00001801
+ END                                                                    00001900
+//*--------------------------------------------------------
+//NORM0010 EXEC PGM=NORMFTP1
+//FTPIN    DD DSN=SEMI.RATEILOGI.AFFMLO70
+//FTPOUT   DD DSN=SEMI.RATEILOGI.AFFMLO70,
+//            LRECL=494
+//*--------------------------------------------------------
+//DPXWAIT  EXEC PGM=DPXWAIT,PARM='000010'
+//MESSAG   DD SYSOUT=*,DCB=(LRECL=121)
+/*

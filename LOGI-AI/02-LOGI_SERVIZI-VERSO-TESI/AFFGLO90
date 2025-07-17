@@ -1,0 +1,78 @@
+//AFFGLO90 JOB (AIEAA,N),LOGI,
+//         COND=(0,LT),CLASS=B,MSGCLASS=1,REGION=20M,USER=GESTMIR
+/*ROUTE PRINT MT
+//JOBLIB DD DSN=DB210L.V10R1M0.SDSNLOAD,DISP=SHR
+//* --------------------------------------------------
+//*        LOGISTICA
+//*    CREAZ. FILE ANAG.SERVIZI/LISTINI A FASHION E TESI
+//* --------------------------------------------------
+//STEP0000  EXEC PGM=IDCAMS
+//SYSPRINT DD  SYSOUT=1
+//SYSIN    DD  *
+ DELETE  SEMI.RESIDE.M2LOG.SERVIZI.XVB            SCRATCH PURGE
+ DELETE  SEMI.RESIDE.M2LOG.SERVIZI.XTESI          SCRATCH PURGE
+ DELETE  SEMI.RESIDE.M2LOG.LISTINI.XVB            SCRATCH PURGE
+ IF MAXCC>=0 THEN SET LASTCC=0
+ IF LASTCC>=0 THEN SET MAXCC=0
+//*
+//* --------------------------------------------------
+//STEP0010 EXEC PGM=IKJEFT01
+//*
+//STEPLIB  DD DSN=MIRO.BATCHLIB.MVS,DISP=SHR
+//*        DD DUMMY=STEPLIB.LIBERA
+//*
+//SERVIZI  DD DSN=SEMI.RESIDE.M2LOG.SERVIZI.XVB,
+//            UNIT=3390,
+//            SPACE=(6144,(450,450),RLSE),
+//            DCB=(LRECL=66,BLKSIZE=0,RECFM=FB),
+//            DISP=(NEW,CATLG,DELETE)
+//LISTINI  DD DSN=SEMI.RESIDE.M2LOG.LISTINI.XVB,
+//            UNIT=3390,
+//            SPACE=(6144,(450,450),RLSE),
+//            DCB=(LRECL=40,BLKSIZE=0,RECFM=FB),
+//            DISP=(NEW,CATLG,DELETE)
+//*
+//STIMPA   DD SYSOUT=1
+//SYSOUT   DD SYSOUT=1
+//SYSTSPRT DD SYSOUT=1
+//SYSPRINT DD SYSOUT=1
+//CEEDUMP  DD SYSOUT=H
+//SYSABEND DD SYSOUT=H
+//SYSUDUMP DD SYSOUT=H
+//*
+//SYSTSIN  DD *
+ DSN SYSTEM(DB2M)
+ RUN PROGRAM(AVALO55) PLAN(PLANMTBA)
+//CARD     DD *
+INV ANAG
+//* --------------------------------------------------
+//* PREPARA FILE SERVIZI PER TESI            -------
+//* --------------------------------------------------
+//STEP0020 EXEC PGM=SORT
+//*
+//SYSOUT   DD SYSOUT=*
+//SORTIN   DD DSN=SEMI.RESIDE.M2LOG.SERVIZI.XVB,DISP=SHR,
+//            DCB=(LRECL=66,BLKSIZE=0,RECFM=FB)
+//SORTOUT  DD DSN=SEMI.RESIDE.M2LOG.SERVIZI.XTESI,
+//            UNIT=3390,
+//            SPACE=(6144,(600,600),RLSE),
+//            DCB=(LRECL=93,BLKSIZE=0,RECFM=FB),
+//            DISP=(NEW,CATLG,DELETE)
+//SORTWK01 DD UNIT=SYSDA,SPACE=(TRK,(30,10),RLSE)
+//SORTWK02 DD UNIT=SYSDA,SPACE=(TRK,(30,10),RLSE)
+//SORTWK03 DD UNIT=SYSDA,SPACE=(TRK,(30,10),RLSE)
+//SYSIN    DD *
+ OUTREC FIELDS=(1,6,14X,7,40,30X,47,2,1X)
+ INCLUDE COND=(49,1,CH,EQ,C'T',AND,(1,2,CH,EQ,C'15',OR,
+               1,2,CH,EQ,C'16',OR,1,2,CH,EQ,C'22'))
+ OPTION COPY
+ END
+//**********************************************************************
+//***   NUOVO DA METTERE X LUNEDI    ***********************************
+//**********************************************************************
+//NORMFTP1 EXEC PGM=NORMFTP2
+//*        NORMALIZZA IL FILE ALLA LUNGHEZZA INDICATA
+//FTPIN    DD DSN=SEMI.RESIDE.M2LOG.SERVIZI.XTESI
+//FTPOUT   DD DSN=SEMI.RESIDE.M2LOG.SERVIZI.XTESI,
+//            LRECL=93
+//**********************************************************************

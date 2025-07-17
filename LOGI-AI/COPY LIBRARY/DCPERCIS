@@ -1,0 +1,92 @@
+
+      *SRERCICS/P---------S = SOURCE / P = PRECOMPILED ----------------*
+      *----*  ROUTINE INTERCETTA ERRORE CICS                      *----*
+      *----*                                                      *----*
+      *----------------------------------------------------------------*
+      *       QUESTA ROUTINE E' LA PRIMA DA DICHIARARE COME COPY
+      *----*                                                      *----*
+      *----------------------------------------------------------------*
+      *    ES.    **
+      *    ES.         COPY SRERCICP.
+      *    ES.    **   SE VOGLIO INTERCETTARE ERRORE DB2
+      *    ES.         COPY SRERDB2P
+      *    ES.    **   SE VOGLIO INTERCETTARE ERRORE TOTAL
+      *    ES.         COPY SRERDB2P
+      *    ES.    **  ETC.
+      *    ES.
+      *    ES.    **   ULTIMA ROUTINE CHE RILASCIA TR-ERRE  PER DECODI
+      *    ES.    **   ERRORE
+      *    ES.         COPY SRERENDS
+      *
+      *----------------------------------------------------------------*
+       Z00-ERRORE.
+      *----------------------------------------------------------------*
+
+           MOVE DFHEIV0                TO T-COMLINE.
+
+           PERFORM
+              VARYING INDERR FROM 1 BY 1
+                  UNTIL INDERR GREATER 25
+                     OR EL-COMLINE (INDERR) EQUAL ZERO
+           END-PERFORM.
+
+           MOVE SPACES                 TO WLINEAXX.
+           IF INDERR LESS 26
+              MOVE EL-COMLINE (INDERR) TO EL-LINE (1)
+              ADD 1                    TO INDERR
+              MOVE EL-COMLINE (INDERR) TO EL-LINE (2)
+              ADD 1                    TO INDERR
+              MOVE EL-COMLINE (INDERR) TO EL-LINE (3)
+              ADD 1                    TO INDERR
+              MOVE EL-COMLINE (INDERR) TO EL-LINE (4)
+              ADD 1                    TO INDERR
+              MOVE EL-COMLINE (INDERR) TO EL-LINE (5).
+
+           MOVE WLINEAXX               TO WCOM-PRGMLINE.
+           MOVE EIBFN                  TO WCOM-CODEIBFN.
+           MOVE EIBRCODE               TO WCOM-CODERCOD.
+           MOVE SPACES                 TO WCOM-ABENCICS.
+           IF EIBRESP  NOT = ZERO OR
+              EIBRESP2 NOT = ZERO
+              EXEC CICS
+                    ASSIGN ABCODE (WCOM-ABENCICS)
+              END-EXEC.
+
+      *SRERENDS/P------------------------------------------------------*
+      *----*  ROUTINE FINALE                                      *----*
+      *----*                                                      *----*
+      *----------------------------------------------------------------*
+      *       QUESTA ROUTINE DA DICHIARARE PER ULTIMA NELLA SEQUNZA
+      *       DELLE COPY  PER INTERCETTARE L'ERRORE
+      *----------------------------------------------------------------*
+      *----------------------------------------------------------------*
+
+            MOVE EIBTRNID              TO WCOM-TRANSAZI.
+            EXEC CICS SYNCPOINT ROLLBACK
+            END-EXEC.
+            EXEC CICS ASSIGN SYSID (WCOM-SYSID)
+            END-EXEC.
+
+            MOVE 'ABEN'                    TO WCOM-CODATSX1.
+            MOVE EIBTRMID                  TO WCOM-CODATSX2.
+      *     MOVE LENGTH OF WCOM-AREA-ERROR TO WCOM-LUNGHERR.
+            MOVE 200                       TO WCOM-LUNGHERR.
+
+            EXEC CICS WRITEQ TS QUEUE  (WCOM-CODATSXX)
+                                FROM   (WCOM-AREA-ERROR)
+                                LENGTH (WCOM-LUNGHERR)
+            END-EXEC.
+
+            EXEC CICS START TRANSID ('ERRE')
+                            FROM    (WCOM-AREAXXXX)
+                            LENGTH  (WCOM-LUNGHEZZ)
+                            TERMID  (EIBTRMID)
+            END-EXEC.
+
+            EXEC CICS ABEND ABCODE (WCOM-ABENCICS)
+                            CANCEL
+            END-EXEC.
+
+       Z00-EX. EXIT.
+
+

@@ -1,0 +1,48 @@
+      ***************************************************************** 
+      *                                                               * 
+      * Copyright (c) 2016-2022 NTT DATA, Inc.                        * 
+      * All rights reserved.                                          * 
+      *                                                               * 
+      ***************************************************************** 
+       01  dfheiblk.                                                    
+           02  eibtime          pic s9(7) comp-3.                       
+           02  eibdate          pic s9(7) comp-3.                       
+           02  eibtrnid         pic x(4).                               
+           02  eibtaskn         pic s9(7) comp-3.                       
+           02  eibtrmid         pic x(4).                               
+           02  dfheigdi         pic s9(4) comp.                         
+           02  eibcposn         pic s9(4) comp.                         
+           02  eibcalen         pic s9(4) comp.                         
+           02  eibaid           pic x(1).                               
+           02  eibfiller1       pic x(1).                               
+           02  eibfn            pic x(2).                               
+           02  eibfiller2       pic x(2).                               
+           02  eibrcode         pic x(6).                               
+           02  eibfiller3       pic x(2).                               
+           02  eibds            pic x(8).                               
+           02  eibreqid         pic x(8).                               
+           02  eibrsrce         pic x(8).                               
+           02  eibsync          pic x(1).                               
+           02  eibfree          pic x(1).                               
+           02  eibrecv          pic x(1).                               
+           02  eibsend          pic x(1).                               
+           02  eibatt           pic x(1).                               
+           02  eibeoc           pic x(1).                               
+           02  eibfmh           pic x(1).                               
+           02  eibcompl         pic x(1).                               
+           02  eibsig           pic x(1).                               
+           02  eibconf          pic x(1).                               
+           02  eiberr           pic x(1).                               
+           02  eibrldbk         pic x(1).                               
+           02  eiberrcd         pic x(4).                               
+           02  eibsynrb         pic x(1).                               
+           02  eibnodat         pic x(1).                               
+           02  eibfiller5       pic x(2).                               
+           02  eibresp          pic s9(8) comp.                         
+           02  eibresp2         pic s9(8) comp.                         
+           02  dfheigdj         pic s9(4) comp.                         
+           02  dfheigdk         pic s9(4) comp.                         
+      *----------------*                                                
+       01  DFHCOMMAREA          PIC X(500).                            
+      *--------------------------------------------------------------*       
+      ****************************************************************

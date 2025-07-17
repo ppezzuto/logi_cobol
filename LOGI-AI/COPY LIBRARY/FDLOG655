@@ -1,0 +1,84 @@
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE DLOGISTI.TDETTORDILOGI             *
+      ******************************************************************
+       01  DCLTDETTORDILOGI.
+           10 L655-AANUMORD        PIC X(8).
+           10 L655-NRRIGORD        PIC S9(5)V USAGE COMP-3.
+           10 L655-NUMPROG7        PIC S9(7)V USAGE COMP-3.
+           10 L655-CDMCAGTM        PIC X(1).
+           10 L655-CDAREGTM        PIC X(2).
+           10 L655-CDDIPGTM        PIC X(1).
+           10 L655-TIPOADDE        PIC X(2).
+           10 L655-KEYADDE1        PIC X(5).
+           10 L655-KEYADDE2        PIC X(3).
+           10 L655-KEYADDE3        PIC X(3).
+           10 L655-KEYADDE4        PIC X(5).
+           10 L655-CODSOCID        PIC X(2).
+           10 L655-CDDIVISD        PIC X(1).
+           10 L655-CENCOSTD        PIC X(5).
+           10 L655-CONTODCD        PIC X(6).
+           10 L655-CODSOCIA        PIC X(2).
+           10 L655-CDDIVISA        PIC X(1).
+           10 L655-CENCOSTA        PIC X(5).
+           10 L655-CONTODCA        PIC X(6).
+           10 L655-UNMISURA        PIC X(2).
+           10 L655-QTAORDIN        PIC S9(7)V9(2) USAGE COMP-3.
+           10 L655-IMPORDIN        PIC S9(11)V9(2) USAGE COMP-3.
+           10 L655-CODSOCIE        PIC X(2).
+           10 L655-AANUMFAT        PIC X(8).
+           10 L655-CENCOSTO        PIC X(5).
+           10 L655-SOCIEMER        PIC X(2).
+           10 L655-PROLOMER        PIC X(2).
+           10 L655-CODLINEA        PIC X(2).
+           10 L655-TIPOARTI        PIC X(1).
+           10 L655-MERCEMAG        PIC X(2).
+           10 L655-CODARTIC        PIC X(5).
+           10 L655-CODDISEG        PIC X(5).
+           10 L655-CODVARIA        PIC X(3).
+           10 L655-STAGIONE        PIC X(2).
+           10 L655-CAUSAMOV        PIC X(2).
+           10 L655-CLIEFORN        PIC X(5).
+           10 L655-INCLIFOR        PIC X(1).
+           10 L655-STABILIM        PIC X(2).
+           10 L655-NRDISPOS        PIC X(6).
+           10 L655-SIGLCICL        PIC X(2).
+           10 L655-TIPOAPPA        PIC X(1).
+           10 L655-AANRRECL        PIC X(8).
+           10 L655-NUMERIFE        PIC X(5).
+           10 L655-FLTAGSCA        PIC X(1).
+           10 L655-CAUSACON        PIC X(1).
+           10 L655-QUALIFIN        PIC X(4).
+           10 L655-QTAMTMOV        PIC S9(7)V9(2) USAGE COMP-3.
+           10 L655-QTAKGMOV        PIC S9(7)V9(2) USAGE COMP-3.
+           10 L655-DTCREAZI        PIC X(8).
+           10 L655-DTULTVAR        PIC X(8).
+           10 L655-CODUTVAR        PIC X(6).
+           10 L655-IMPTRPAG        PIC S9(7)V9(2) USAGE COMP-3.
+           10 L655-PAESMERC        PIC X(3).
+           10 L655-TIPORECO        PIC X(4).
+           10 L655-DTFATTUR        PIC X(8).
+           10 L655-TIPOSTAG        PIC X(1).
+           10 L655-MTDISPOS        PIC S9(7)       COMP-3.
+           10 L655-PERC2SCE        PIC S9(2)V9     COMP-3.
+           10 L655-MTDIFMAX        PIC S9(7)V99    COMP-3.
+           10 L655-MTDIFTOT        PIC S9(7)V99    COMP-3.
+           10 L655-MTDIFMES        PIC S9(7)V99    COMP-3.
+           10 L655-PARTLAVO        PIC X(6).
+           10 L655-MTDISPAR        PIC S9(7)       COMP-3.
+           10 L655-SERIECIL        PIC X(2).
+           10 L655-TPLAVMES        PIC X(1).
+           10 L655-FLAGRICH        PIC X(1).
+           10 L655-NRCILLAV        PIC S9(3)       COMP-3.
+           10 L655-SLLAVMES        PIC X(2).
+           10 L655-MTMATEFF        PIC S9(7)V99    COMP-3.
+           10 L655-MTCONSUM        PIC S9(7)V99    COMP-3.
+           10 L655-QTORDPRE        PIC S9(7)V99    COMP-3.
+           10 L655-PREZZORD        PIC S9(7)V9(4)  COMP-3.
+           10 L655-CODFORVI        PIC X(5).
+           10 L655-CODIMBAL        PIC X(2).
+           10 L655-CODCOLLO        PIC X(5).
+           10 L655-MTRAGDIS        PIC S9(7) COMP-3.
+           10 L655-NUMDISTI        PIC X(6).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 77      *
+      ******************************************************************

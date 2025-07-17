@@ -1,0 +1,46 @@
+      ******************************************************************
+      *                        *** DCLOGI ***                          *
+      *     DSECT RELATIVA ALLA COMMAREA DEGLI ORDINI DI LOGISTICA     *
+      *                    - LUNGHEZZA 175 BYTES -                     *
+      ******************************************************************
+               10  FILLER                           PIC X(200).
+           05  WORK-RICHIESTA REDEFINES WCOM-RIKIESTA.
+               10  WCOM-DCLOGI.
+                   15  WCOM-CODUTENT                PIC X(06).
+                   15  WCOM-CODSOCIE                PIC X(02).
+                   15  WCOM-CDDIVISI                PIC X(01).
+                   15  WCOM-CODDEPOS                PIC X(02).
+                   15  WCOM-CODCLIEN                PIC X(05).
+                   15  WCOM-CLIFOCON                PIC X(05).
+                   15  WCOM-CODSERVI                PIC X(06).
+                   15  WCOM-TIPSERVI                PIC X(01).
+                   15  WCOM-CODDIVIS                PIC X(02).
+                   15  WCOM-UNMISURA                PIC X(02).
+                   15  WCOM-AANUMORD                PIC X(08).
+                   15  WCOM-NRRIGORD                PIC S9(3)  COMP-3.
+                   15  WCOM-CONTODCE                PIC X(06).
+                   15  WCOM-SALDATOX                PIC X(01).
+                   15  WCOM-OPERAZIO                PIC X(01).
+                   15  WCOM-DECIDIVI                PIC X(01).
+                   15  WCOM-CONTOPER                PIC S9(5)  COMP-3.
+                   15  WCOM-CODERROR                PIC X(05).
+                   15  WCOM-FLAGAUTO                PIC X(01).
+                   15  WCOM-SOCIEMER                PIC X(02).
+                   15  WCOM-TIPOARTI                PIC X(01).
+                   15  WCOM-PAESPROV                PIC X(03).
+                   15  WCOM-PAESMERC                PIC X(03).
+                   15  WCOM-DTCARORD                PIC X(08).
+                   15  WCOM-FLAGMANU                PIC X(01).
+                   15  WCOM-FLAGGIVA                PIC X(01).
+                   15  WCOM-TIPORECO                PIC X(04).
+                   15  WCOM-AANUMFAT                PIC X(08).
+                   15  WCOM-DTFATTUR                PIC X(08).
+                   15  WCOM-NRPREATT                PIC X(18).
+                   15  WCOM-DTPREATT                PIC X(08).
+                   15  WCOM-STATUSXX                PIC X(01).
+                   15  WCOM-AAMMCOMP                PIC X(06).
+                   15  WCOM-CENCOSTD                PIC X(05).
+                   15  WCOM-CENCOSTA                PIC X(05).
+                   15  WCOM-ESENTIVA                PIC X(01).
+                   15  FILLER                       PIC X(32).
+      *--------------------------------------------------------------*

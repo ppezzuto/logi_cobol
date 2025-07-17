@@ -1,0 +1,73 @@
+      ******************************************************************
+      * DCLGEN TABLE(DANAGRAF.TCENCOSTO)                               *
+      *        LIBRARY(MTTEST.SOURCE.LIBTEST(FDANA982))                *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(A982-)                                            *
+      *        QUOTE                                                   *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE DANAGRAF.TCENCOSTO TABLE
+           ( CODSOCIE                       CHAR(2) NOT NULL,
+             CENCOSTO                       CHAR(5) NOT NULL,
+             DESCENCO                       CHAR(30) NOT NULL,
+             RAGCENCO                       CHAR(3) NOT NULL,
+             ANNULLAM                       CHAR(1) NOT NULL,
+             NEWCENCO                       CHAR(5) NOT NULL,
+             CENCOLIS                       CHAR(5) NOT NULL,
+             DTCREAZI                       CHAR(8) NOT NULL,
+             DTULTVAR                       CHAR(8) NOT NULL,
+             CODUTVAR                       CHAR(6) NOT NULL,
+             CDMCAGTM                       CHAR(1) NOT NULL,
+             CDAREGTM                       CHAR(2) NOT NULL,
+             CDDIPGTM                       CHAR(1) NOT NULL,
+             CDUBIGTM                       CHAR(2) NOT NULL,
+             CDLINGTM                       CHAR(2) NOT NULL,
+             SIGLCALE                       CHAR(3) NOT NULL,
+             GRUPSIGE                       CHAR(1) NOT NULL,
+             CDDIVISI                       CHAR(1) NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE DANAGRAF.TCENCOSTO                 *
+      ******************************************************************
+       01  DCLTCENCOSTO.
+      *                       CODSOCIE
+           10 A982-CODSOCIE        PIC X(2).
+      *                       CENCOSTO
+           10 A982-CENCOSTO        PIC X(5).
+      *                       DESCENCO
+           10 A982-DESCENCO        PIC X(30).
+      *                       RAGCENCO
+           10 A982-RAGCENCO        PIC X(3).
+      *                       ANNULLAM
+           10 A982-ANNULLAM        PIC X(1).
+      *                       NEWCENCO
+           10 A982-NEWCENCO        PIC X(5).
+      *                       CENCOLIS
+           10 A982-CENCOLIS        PIC X(5).
+      *                       DTCREAZI
+           10 A982-DTCREAZI        PIC X(8).
+      *                       DTULTVAR
+           10 A982-DTULTVAR        PIC X(8).
+      *                       CODUTVAR
+           10 A982-CODUTVAR        PIC X(6).
+      *                       CDMCAGTM
+           10 A982-CDMCAGTM        PIC X(1).
+      *                       CDAREGTM
+           10 A982-CDAREGTM        PIC X(2).
+      *                       CDDIPGTM
+           10 A982-CDDIPGTM        PIC X(1).
+      *                       CDUBIGTM
+           10 A982-CDUBIGTM        PIC X(2).
+      *                       CDLINGTM
+           10 A982-CDLINGTM        PIC X(2).
+      *                       SIGLCALE
+           10 A982-SIGLCALE        PIC X(3).
+      *                       GRUPSIGE
+           10 A982-GRUPSIGE        PIC X(1).
+      *                       CDDIVISI
+           10 A982-CDDIVISI        PIC X(1).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 18      *
+      ******************************************************************

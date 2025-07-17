@@ -1,0 +1,18 @@
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE DCONTCLI.TCONTIDCE                 *
+      ******************************************************************
+       01  DCLTCONTIDCE.
+           10 C861-CONTODCE        PIC X(6).
+           10 C861-CODPIANO        PIC X(2).
+           10 C861-CONTPROV        PIC X(6).
+           10 C861-DESCRDCE        PIC X(25).
+           10 C861-ANNULLAM        PIC X(1).
+           10 C861-TIPCONTO        PIC X(2).
+           10 C861-CONTGRUP        PIC X(6).
+           10 C861-NOTECON1        PIC X(33).
+           10 C861-NOTECON2        PIC X(33).
+           10 C861-INDBILQU        PIC X(1).
+           10 C861-FLCOMMES        PIC X(1).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 11 C861- *
+      ******************************************************************

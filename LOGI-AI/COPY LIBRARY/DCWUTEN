@@ -1,0 +1,53 @@
+      ******************************************************            00000010
+      ******         AREA PASSAGGIO CHIAMATA          ******            00000020
+      ******       MODULO  SCTUTEN (LENGTH 250)       ******            00000030
+      ******************************************************            00000040
+       01  DCWUTEN.                                                     00000050
+           05 UTEN-RETCOD              PIC S9(3).                       00000060
+           05 UTEN-FUNZIONE            PIC X(4).                        00000070
+           05 UTEN-TIPOCTRL            PIC X.                           00000080
+           05 FILLER                   PIC X(3).                        00000090
+      *----- USER                                                       00000100
+           05 UTEN-USER                PIC X(10).                       00000110
+           05 UTEN-NOMUSER             PIC X(20).                       00000120
+      *----- SOCIETA' COMMERCIALE                                       00000130
+           05 UTEN-CODSOCOM            PIC XX.                          00000140
+           05 UTEN-NOMSOCOM            PIC X(21).                       00000150
+      *----- UFFICIO COMMERCIALE                                        00000160
+           05 UTEN-CODUFCOM            PIC XX.                          00000170
+           05 UTEN-NOMUFCOM            PIC X(15).                       00000180
+      *----- DEPOSITO/STABILIMENTO DELLA MERCE                          00000190
+           05 UTEN-CODDEPOS            PIC XX.                          00000200
+           05 UTEN-CODSTABI REDEFINES UTEN-CODDEPOS PIC XX.             00000210
+           05 UTEN-NOMDEPOS            PIC X(24).                       00000220
+           05 UTEN-NOMSTABI REDEFINES UTEN-NOMDEPOS PIC X(24).          00000230
+      *----- SOCIETA' PROPRIETARIA DELLA MERCE                          00000240
+           05 UTEN-CODSOMER            PIC XX.                          00000250
+           05 UTEN-NOMSOMER            PIC X(21).                       00000260
+      *----- CODICE LINGUA                                              00000270
+           05 UTEN-CODLINGUA           PIC X.                           00000280
+      *----- CODICE DI RITORNO DA WWTSIGN                               00000290
+           05 UTEN-MSGERROR.                                            00000300
+              10 UTEN-CODERROR         PIC X(5).                        00000310
+              10 UTEN-TXTERROR         PIC X(15).                       00000320
+      *----- CODICE PROPRIETA' LOGICA MERCE                             00000330
+           05 UTEN-PROLOMER            PIC X(02).                       00000340
+      *----- CODICE DEPOSITO FILO                                       00000350
+           05 UTEN-CODDEPFF            PIC X(02).                       00000360
+      *----- CODICE DEPOSITO GREGGIO                                    00000370
+           05 UTEN-CODDEPGG            PIC X(02).                       00000380
+      *----- CODICE DEPOSITO FINITO                                     00000390
+           05 UTEN-CODDEPTT            PIC X(02).                       00000400
+      *----- FLAG AVVISO PER UTENTE                                     00000390
+           05 UTEN-FLAGUTEN            PIC X(01).                       00000400
+      *----- FLAG AVVISO PER TRANSAZIONE                                00000390
+           05 UTEN-FLAGTRAN            PIC X(01).                       00000400
+      *----- OPID                                                       00000390
+           05 UTEN-OPID                PIC X(3).                        00000410
+      *----- FLAG UTENTE LIMITATO                                       00000390
+           05 UTEN-FLAGLIMI            PIC X(01).                       00000400
+      *----- CODICE DEPOSITO PRESENZE                                   00000390
+           05 UTEN-CODDEPPR            PIC X(02).                       00000400
+           05 FILLER                   PIC X(83).                       00000410
+      ******************************************************            00000420
+      ******************************************************            00000430

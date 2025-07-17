@@ -1,0 +1,181 @@
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE DANAGRAF.TCLIENTI                  *
+      ******************************************************************
+       01  DCLTCLIENTI.
+      *                       CODCLIEN
+           10 A901-CODCLIEN        PIC X(5).
+      *                       STATCLIE
+           10 A901-STATCLIE        PIC X(1).
+      *                       GENECLIE
+           10 A901-GENECLIE        PIC X(1).
+      *                       TIPOCLIE
+           10 A901-TIPOCLIE        PIC X(1).
+      *                       TIPOCONS
+           10 A901-TIPOCONS        PIC X(1).
+      *                       CLIFOCON
+           10 A901-CLIFOCON        PIC X(5).
+      *                       CODSOCIE
+           10 A901-CODSOCIE        PIC X(2).
+      *                       CAPOCONT
+           10 A901-CAPOCONT        PIC X(5).
+      *                       CODFISCA
+           10 A901-CODFISCA        PIC X(16).
+      *                       ESENTIVA
+           10 A901-ESENTIVA        PIC X(1).
+      *                       NUMESIVA
+           10 A901-NUMESIVA        PIC X(5).
+      *                       DATESIVA
+           10 A901-DATESIVA        PIC X(8).
+      *                       UFFICIVA
+           10 A901-UFFICIVA        PIC X(18).
+      *                       IMPESIVA
+           10 A901-IMPESIVA        PIC S9(4)V USAGE COMP-3.
+      *                       BANCAPPO
+           10 A901-BANCAPPO        PIC X(3).
+      *                       NOMBANCL
+           10 A901-NOMBANCL        PIC X(114).
+      *                       CONTOCOR
+           10 A901-CONTOCOR        PIC X(13).
+      *                       ASSOBANC
+           10 A901-ASSOBANC        PIC X(5).
+      *                       AVVIBANC
+           10 A901-AVVIBANC        PIC X(5).
+      *                       CLIEFATT
+           10 A901-CLIEFATT        PIC X(5).
+      *                       PAESFATT
+           10 A901-PAESFATT        PIC X(3).
+      *                       RAGFATTU
+           10 A901-RAGFATTU        PIC X(24).
+      *                       ESRAGFAT
+           10 A901-ESRAGFAT        PIC X(24).
+      *                       INDFATTU
+           10 A901-INDFATTU        PIC X(24).
+      *                       ESINDFAT
+           10 A901-ESINDFAT        PIC X(24).
+      *                       CITFATTU
+           10 A901-CITFATTU        PIC X(18).
+      *                       ESCITFAT
+           10 A901-ESCITFAT        PIC X(18).
+      *                       CAPFATTU
+           10 A901-CAPFATTU        PIC X(5).
+      *                       PAESMERC
+           10 A901-PAESMERC        PIC X(3).
+      *                       RAGMERCE
+           10 A901-RAGMERCE        PIC X(24).
+      *                       ESRAGMER
+           10 A901-ESRAGMER        PIC X(24).
+      *                       INDMERCE
+           10 A901-INDMERCE        PIC X(24).
+      *                       ESINDMER
+           10 A901-ESINDMER        PIC X(24).
+      *                       CITMERCE
+           10 A901-CITMERCE        PIC X(18).
+      *                       ESCITMER
+           10 A901-ESCITMER        PIC X(18).
+      *                       CAPMERCE
+           10 A901-CAPMERCE        PIC X(5).
+      *                       ZONAMERC
+           10 A901-ZONAMERC        PIC X(2).
+      *                       TELCLIEN
+           10 A901-TELCLIEN        PIC X(20).
+      *                       TLXCLIEN
+           10 A901-TLXCLIEN        PIC X(20).
+      *                       FAXCLIEN
+           10 A901-FAXCLIEN        PIC X(20).
+      *                       RIFEMIRO
+           10 A901-RIFEMIRO        PIC X(11).
+      *                       PAESORDI
+           10 A901-PAESORDI        PIC X(3).
+      *                       ZONAORDI
+           10 A901-ZONAORDI        PIC X(2).
+      *                       DATVASTA
+           10 A901-DATVASTA        PIC X(8).
+      *                       ATTENZDI
+           10 A901-ATTENZDI        PIC X(24).
+      *                       CONDPAGA
+           10 A901-CONDPAGA        PIC X(3).
+      *                       MMESCLU1
+           10 A901-MMESCLU1        PIC S9(2)V USAGE COMP-3.
+      *                       MMESCLU2
+           10 A901-MMESCLU2        PIC S9(2)V USAGE COMP-3.
+      *                       GGSCATRA
+           10 A901-GGSCATRA        PIC S9(2)V USAGE COMP-3.
+      *                       NUMGGVIA
+           10 A901-NUMGGVIA        PIC S9(2)V USAGE COMP-3.
+      *                       TIPOTRAT
+           10 A901-TIPOTRAT        PIC X(1).
+      *                       ALTERSPE
+           10 A901-ALTERSPE        PIC X(1).
+      *                       CODILING
+           10 A901-CODILING        PIC X(1).
+      *                       DTULTVAR
+           10 A901-DTULTVAR        PIC X(8).
+      *                       TIPCLCAR
+           10 A901-TIPCLCAR        PIC X(1).
+      *                       SPETRASP
+           10 A901-SPETRASP        PIC X(1).
+      *                       DTCREAZI
+           10 A901-DTCREAZI        PIC X(8).
+      *                       CODDIVIS
+           10 A901-CODDIVIS        PIC X(2).
+      *                       CDIVACEE
+           10 A901-CDIVACEE        PIC X(14).
+      *                       ZONAFATT
+           10 A901-ZONAFATT        PIC X(2).
+      *                       CLASDOGA
+           10 A901-CLASDOGA        PIC X(1).
+      *                       INTNCLIE
+           10 A901-INTNCLIE        PIC X(50).
+      *                       CAPOCOMM
+           10 A901-CAPOCOMM        PIC X(5).
+      *                       PRIORITA
+           10 A901-PRIORITA        PIC X(1).
+      *                       BULSTATX
+           10 A901-BULSTATX        PIC X(13).
+      *                       CODUTVAR
+           10 A901-CODUTVAR        PIC X(6).
+      *                       CODUTCRE
+           10 A901-CODUTCRE        PIC X(6).
+      *                       CDRESCON
+           10 A901-CDRESCON        PIC X(2).
+      *                       CENCOACQ
+           10 A901-CENCOACQ        PIC X(5).
+      *                       CAPOSOCI
+           10 A901-CAPOSOCI        PIC X(5).
+      *                       CDFISCAL
+           10 A901-CDFISCAL        PIC X(16).
+      *                       CONDPACA
+           10 A901-CONDPACA        PIC X(3).
+      *                       CODXIBAN
+           10 A901-CODXIBAN        PIC X(4).
+      *                       CODXXCIN
+           10 A901-CODXXCIN        PIC X(2).
+      *                       ZIPFATTU
+           10 A901-ZIPFATTU        PIC X(15).
+      *                       ZIPMERCE
+           10 A901-ZIPMERCE        PIC X(15).
+      *                       TIPOLIST
+           10 A901-TIPOLIST        PIC X(1).
+      *                       SWIFTCOD
+           10 A901-SWIFTCOD        PIC X(11).
+      *                       PERCEIVA
+           10 A901-PERCEIVA        PIC S9(3)V9(2) USAGE COMP-3.
+      *                       DTVALIVA
+           10 A901-DTVALIVA        PIC X(8).
+      *                       CLASSCLI
+           10 A901-CLASSCLI        PIC X(1).
+      *                       RATINGCO
+           10 A901-RATINGCO        PIC X(3).
+      *                       RISCHCLI
+           10 A901-RISCHCLI        PIC X(1).
+      *
+           10 A901-NRPROIVA        PIC X(30).
+      *
+           10 A901-IMPESNEW        PIC S9(9)V9(2) USAGE COMP-3.
+           10 A901-TIPOSTAG        PIC X(1).
+           10 A901-FLFATELE        PIC X(1).
+           10 A901-CDDESTFE        PIC X(7).
+           10 A901-INPECCLI        PIC X(50).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 88      *
+      ******************************************************************

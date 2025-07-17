@@ -1,0 +1,654 @@
+      *((program: AVALO45.cblx))
+000001*-------------* PROGRAMMA BATCH COBOL2 DB2 *---------------------*
+000002 ID DIVISION.                                                     
+000003*-------------*                                                   
+000004 PROGRAM-ID. AVALO45.                         
+000005                                                                  
+000006*----------------------------------------------------------------*
+000007* AGGIUNGE CODICE ESENZIONE DEL SERVIZIO PER OGNI RIGA D'ORDINE  *
+000008* DEL FILE SEQUENZIALE. VERRA' UTILIZZATO NEL SORT ESTERNO.      *
+000009*----------------------------------------------------------------*
+000010 ENVIRONMENT DIVISION.                                            
+000011*---------------------*                                           
+000012 CONFIGURATION SECTION.                                           
+000013 SPECIAL-NAMES.                                                   
+000014     DECIMAL-POINT IS COMMA.                                      
+000015                                                                  
+000016 INPUT-OUTPUT SECTION.                                            
+000017 FILE-CONTROL.                                                    
+000018     SELECT  FATTURAT ASSIGN UT-S-FATTURAT.                       
+000019     SELECT  OUTFATTU ASSIGN UT-S-OUTFATTU.                       
+000020     SELECT  ORDINIVB ASSIGN UT-S-ORDINIVB.                       
+000021     SELECT  OUTORDIN ASSIGN UT-S-OUTORDIN.                       
+000022                                                                  
+000023 DATA DIVISION.                                                   
+000024*--------------*                                                  
+000025 FILE SECTION.                                                    
+000026 FD  FATTURAT                                                     
+000027     RECORDING MODE IS F                                          
+000028     BLOCK CONTAINS  0 RECORDS.                                   
+000029 01  REC-FATTURAT                PIC X(350).                      
+000030 FD  OUTFATTU                                                     
+000031     RECORDING MODE IS F                                          
+000032     BLOCK CONTAINS  0 RECORDS.                                   
+000033 01  REC-OUTFATTU                PIC X(350).                      
+000034                                                                  
+000035 FD  ORDINIVB                                                     
+000036     RECORDING MODE IS F                                          
+000037     BLOCK CONTAINS  0 RECORDS.                                   
+000038 01  REC-ORDINIVB                PIC X(200).                      
+000039 FD  OUTORDIN                                                     
+000040     RECORDING MODE IS F                                          
+000041     BLOCK CONTAINS  0 RECORDS.                                   
+000042 01  REC-OUTORDIN                PIC X(200).                      
+000043                                                                  
+000044 WORKING-STORAGE SECTION.
+
+       01  SQLDA-ID pic 9(4) comp-5.
+       01  SQLDSIZE pic 9(4) comp-5.
+       01  SQL-STMT-ID pic 9(4) comp-5.
+       01  SQLVAR-INDEX pic 9(4) comp-5.
+       01  SQL-DATA-TYPE pic 9(4) comp-5.
+       01  SQL-HOST-VAR-LENGTH pic 9(9) comp-5.
+       01  SQL-S-HOST-VAR-LENGTH pic 9(9) comp-5.
+       01  SQL-S-LITERAL pic X(258).
+       01  SQL-LITERAL1 pic X(130).
+       01  SQL-LITERAL2 pic X(130).
+       01  SQL-LITERAL3 pic X(130).
+       01  SQL-LITERAL4 pic X(130).
+       01  SQL-LITERAL5 pic X(130).
+       01  SQL-LITERAL6 pic X(130).
+       01  SQL-LITERAL7 pic X(130).
+       01  SQL-LITERAL8 pic X(130).
+       01  SQL-LITERAL9 pic X(130).
+       01  SQL-LITERAL10 pic X(130).
+       01  SQL-IS-LITERAL pic 9(4) comp-5 value 1.
+       01  SQL-IS-INPUT-HVAR pic 9(4) comp-5 value 2.
+       01  SQL-CALL-TYPE pic 9(4) comp-5.
+       01  SQL-SECTIONUMBER pic 9(4) comp-5.
+       01  SQL-INPUT-SQLDA-ID pic 9(4) comp-5.
+       01  SQL-OUTPUT-SQLDA-ID pic 9(4) comp-5.
+       01  SQLA-PROGRAM-ID.
+           05 SQL-PART1 pic 9(4) COMP-5 value 172.
+           05 SQL-PART2 pic X(6) value "AEAQAI".
+           05 SQL-PART3 pic X(24) value "qAXXIBGn01111 2         ".
+           05 SQL-PART4 pic 9(4) COMP-5 value 8.
+           05 SQL-PART5 pic X(8) value "DB2XMT  ".
+           05 SQL-PART6 pic X(120) value LOW-VALUES.
+           05 SQL-PART7 pic 9(4) COMP-5 value 8.
+           05 SQL-PART8 pic X(8) value "AVALO45 ".
+           05 SQL-PART9 pic X(120) value LOW-VALUES.
+                                                                        
+000045 01  FILLER                      PIC X(8)  VALUE '**DCPARM'.      
+000046*    COPY DCPARM.                                                 
+      *>>((file: DCPARM))
+000001***************************************************************** 
+000002*******                                                         * 
+000003*******       A R E A   P A R A M E T R I C A       *COBOL*     * 
+000004*******                                                         * 
+000005***************************************************************** 
+000006 01  DCPARM.                                                      
+000007*******  PPNAME   = NOME PROGRAMMA                                
+000008     02  PPNAME           PIC X(8)    VALUE SPACES.               
+000009*******  PPROUTIN = ROUTINE DA ESEGUIRE                           
+000010     02  PPROUTIN         PIC X       VALUE SPACES.               
+000011     02  PPSTAT           PIC X(4)    VALUE SPACES.               
+000012*******  PPNUSK   = NUMERO DI SCHEDE X LA FUNZIONE -N-            
+000013     02  PPNUSK           PIC X(2)    VALUE SPACES.               
+000014     02  PPFIRST          PIC X       VALUE SPACES.               
+000015*******                                                           
+000016*********************** SKEDE PARAMETRO - MAX 10 **************** 
+000017*******                                                           
+000018     02  SK-PARM.                                                 
+000019         05  PPSK1            PIC X(80)   VALUE SPACES.           
+000020         05  PPSK2            PIC X(80)   VALUE SPACES.           
+000021         05  PPSK3            PIC X(80)   VALUE SPACES.           
+000022         05  PPSK4            PIC X(80)   VALUE SPACES.           
+000023         05  PPSK5            PIC X(80)   VALUE SPACES.           
+000024         05  PPSK6            PIC X(80)   VALUE SPACES.           
+000025         05  PPSK7            PIC X(80)   VALUE SPACES.           
+000026         05  PPSK8            PIC X(80)   VALUE SPACES.           
+000027         05  PPSK9            PIC X(80)   VALUE SPACES.           
+000028         05  PPSK10           PIC X(80)   VALUE SPACES.           
+000029         05  PPSK11           PIC X(80)   VALUE SPACES.           
+000030     02  TAB-SK-PARM REDEFINES SK-PARM.                           
+000031         05  EL-SK-PARM OCCURS 11 TIMES.                          
+000032             10  NAME-SK-PARM     PIC XX.                         
+000033             10  FILLER           PIC X.                          
+000034             10  DATA-SK-PARM     PIC X(77).                      
+000035*******                                                           
+000036*********************** ELEMENTO DI RICERCA ********************* 
+000037*******                                                           
+000038*******  PPNMFILE  = NOME FILE                                    
+000039     02  PPNMFILE         PIC X(7)    VALUE SPACES.               
+000040*******  PPTPFILE  = TIPO FILE                                    
+000041     02  PPTPFILE         PIC X(1)    VALUE SPACES.               
+000042*******  PPTPOPER  = TIPO OPERAZIONE                              
+000043     02  PPTPOPER         PIC X(1)    VALUE SPACES.               
+000044     02  FILLER           PIC X(7)    VALUE SPACES.               
+000045*******                                                           
+000046*********************** TABELLA DI 30 ELEMENTI ****************** 
+000047*******                                                           
+000048     02  TAB-CONTATORI.                                           
+000049         05  EL-CONTATORI OCCURS 30 TIMES.                        
+000050             10  EL-PPNMFILE      PIC X(7)        VALUE SPACES.   
+000051             10  EL-PPTPFILE      PIC X           VALUE SPACES.   
+000052             10  EL-PPTPOPER      PIC X           VALUE SPACES.   
+000053             10  EL-CONTATOR      PIC 9(9) COMP-3 VALUE ZEROES.   
+000054             10  EL-FILLER        PIC XX          VALUE SPACES.   
+000055*    02  FILLER           PIC X(7)     VALUE SPACES.              
+000056*******              TIPO FILE                                    
+000057*    02  FILLER           PIC X(1)     VALUE SPACES.              
+000058*******              TIPO OPERAZIONE                              
+000059*    02  FILLER           PIC X(1)     VALUE SPACES.              
+000060*******              NUMERO OPERAZIONI                            
+000061*    02  FILLER           PIC 9(9)     COMP-3    VALUE ZERO.      
+000062*    02  FILLER           PIC X(2)     VALUE SPACES.              
+000063*******  29 CAMPI DA 16 BYTES, IN TOTALE 464 BYTES                
+000064*    02  FILLER           PIC X(464)   VALUE SPACES.              
+000065*******                                                           
+000066*********************** STAMPA MESSAGGI ************************* 
+000067*******                                                           
+000068*******  PPMESSAG  = MESSAGGIO DA STAMPARE                        
+000069     02  PPMESSAG         PIC X(132)  VALUE SPACES.               
+000070     02  FILLER           PIC X(4)    VALUE SPACES.               
+000071*******                                                           
+000072*********************** DATE DA TABE TABPRODA ******************* 
+000073*******                                                           
+000074*******  DATA-PROG = NOME ELEMENTO DI TABE TABPRODA               
+000075     02  DATA-PROG        PIC X(7)    VALUE SPACES.               
+000076*******  DATA-TIPO = TIPO DI DATA  DI TABE TABPRODA               
+000077     02  DATA-TIPO        PIC X       VALUE SPACES.               
+000078*******  DATA-INIZ = DATA INIZIO PERIODO                          
+000079     02  DATA-INIZ.                                               
+000080         05  GG-INIZ.                                             
+000081             10  SS-CORSO PIC XX      VALUE SPACES.               
+000082         05  MM-INIZ      PIC XX      VALUE SPACES.               
+000083         05  AA-INIZ      PIC XX      VALUE SPACES.               
+000084*******  DATA-FINE = DATA FINE PERIODO                            
+000085     02  DATA-FINE.                                               
+000086         05  GG-FINE      PIC XX      VALUE SPACES.               
+000087         05  MM-FINE      PIC XX      VALUE SPACES.               
+000088         05  AA-FINE      PIC XX      VALUE SPACES.               
+000089     02  FILLER           PIC X(4)    VALUE SPACES.               
+000090*******                                                           
+000091*********************** CALL GENERALIZZATA ********************** 
+000092*******                                                           
+000093*******  PPCALL    = NOME MODULO X CALLER                         
+000094     02  PPCALL           PIC X(8)    VALUE SPACES.               
+000095*******                                                           
+000096***************************************************************** 
+000097*  EJECT                                                          
+      *<<((file: DCPARM))
+000047 01  FILLER                      PIC X(8)  VALUE '*DCDB2ER'.      
+000048*    COPY DCDB2ER.                                                
+      *>>((file: DCDB2ER))
+000001******************************************************************
+000002*****               AREA PER MODULO SCDB2ER                  *****
+000003******************************************************************
+000004 01  DCDB2ER.                                                     
+000005     02 WCOM-LUNGHEZZ         PIC S9(3) COMP-3 VALUE +171.        
+000006     02 WCOM-FILEFUNZ         PIC X(10).                          
+000007     02 WCOM-FILENOME         PIC X(30).                          
+000008     02 WCOM-FILECTRL         PIC X(30).                          
+000009     02 WCOM-MESSAGES         PIC X(80).                          
+000010     02 WCOM-CODABEND         PIC X(4).                           
+000011     02 MESS-CODERROR         PIC X(6).                           
+000012     02 WSWERROR              PIC X.                              
+000013        88 ERRORE             VALUE '*'.                          
+000014     02 WCOM-PROGNAME         PIC X(8).                           
+      *<<((file: DCDB2ER))
+000049 01  FILLER                      PIC X(8)  VALUE '*FSNET14'.      
+000050*    COPY FSNET14.                                                
+      *>>((file: FSNET14))
+000001******************************************************************
+000002** -LOGISTICA                                                   **
+000003** -TRASMISSIONE PREFATTURA ATTIVA  NM     -- >TEXTILE (277)    **
+000004** -LUNGHEZZA TOTALE (350). IN CODA SONO AGGIUNTI DATA/ORA ELAB **
+000005******************************************************************
+000006 01  FSNET14.                                                     
+000007     05 N14-CODSOCIE              PIC X(10).                      
+000008     05 N14-NRPREATT              PIC X(10).                      
+000009     05 N14-TIPODOCU              PIC X(10).                      
+000010     05 N14-NUMPROGR              PIC 9(05).                      
+000011     05 N14-DTPREATT              PIC X(08).                      
+000012     05 N14-CODSERVI              PIC X(20).                      
+000013     05 N14-NOTENOTE              PIC X(70).                      
+000014     05 N14-QTAORDIN              PIC 9(8)V9(3).                  
+000015     05 N14-UNMISURA              PIC X(03).                      
+000016     05 N14-IMPORDIN              PIC 9(8)V9(3).                  
+000017     05 N14-SIGLADIV              PIC X(03).                      
+000018     05 N14-ANAGSEND              PIC X(20).                      
+000019     05 N14-ANAGRECE              PIC X(20).                      
+000020     05 N14-ANAGPROP              PIC X(20).                      
+000021     05 N14-CENCOTRA              PIC X(15).                      
+000022     05 N14-CENCOSTO              PIC X(15).                      
+000023     05 N14-CONTODCE              PIC X(15).                      
+000024     05 N14-FLPAECEE              PIC X(01).                      
+000025     05 N14-CONDRESA              PIC X(10).                      
+000026     05 N14-STATIST5              PIC X(15).                      
+000027     05 N14-ESENTIVA              PIC X(01).                      
+000028     05 N14-FILLER                PIC X(43).                      
+000029     05 N14-DATAELAB              PIC X(08).                      
+000030     05 N14-TEMPELAB              PIC X(06).                      
+      *<<((file: FSNET14))
+000051 01  FILLER                      PIC X(8)  VALUE '*FSNET15'.      
+000052*    COPY FSNET15.                                                
+      *>>((file: FSNET15))
+000001******************************************************************
+000002** -LOGISTICA                                                   **
+000003** -TRASMISSIONE ORDINI             TEXTILE-- >FASHION (146)    **
+000004**                                  FASHION-- >TEXTILE (146)    **
+000005** -LUNGHEZZA TOTALE (200). IN CODA SONO AGGIUNTI DATA/ORA ELAB **
+000006******************************************************************
+000007 01  FSNET15.                                                     
+000008     05 N15-CODSOCIE              PIC X(02).                      
+000009     05 N15-DTCARORD              PIC X(08).                      
+000010     05 N15-AANUMORD              PIC X(08).                      
+000011     05 N15-SIGLADIV              PIC X(03).                      
+000012     05 N15-TIPSERVI              PIC X(01).                      
+000013     05 N15-CODCLIEN              PIC X(05).                      
+000014     05 N15-CODSERVI              PIC X(06).                      
+000015     05 N15-NOTENOTE              PIC X(60).                      
+000016     05 N15-QTAORDIN              PIC 9(7)V9(2).                  
+000017     05 N15-PREZZORD              PIC 9(5)V9(4).                  
+000018     05 N15-IMPORDIN              PIC 9(9)V9(2).                  
+000019     05 N15-CENCOSTD              PIC X(05).                      
+000020     05 N15-CENCOSTA              PIC X(05).                      
+000021     05 N15-CONTODCE              PIC X(06).                      
+000022     05 N15-FLAGGIVA              PIC X(01).                      
+000023     05 N15-AAMMCOMP              PIC X(06).                      
+000024     05 N15-OPERAZIO              PIC X(01).                      
+000025     05 N15-CODUTEVB              PIC X(05).                      
+000026     05 N15-ESENTIVA              PIC X(01).                      
+000027     05 N15-FILLER                PIC X(34).                      
+000028     05 N15-DATAELAB              PIC X(08).                      
+000029     05 N15-TEMPELAB              PIC X(06).                      
+      *<<((file: FSNET15))
+000053                                                                  
+000054 01  FILLER                      PIC X(8)  VALUE '*COMODI*'.      
+000055 01  COMODI.                                                      
+000056     05 EOF                      PIC X(01).                       
+000057     05 SK-SKPARAME.                                              
+000058        10 SK-TIPOELAB           PIC X(02).                       
+000059        10 FILLER                PIC X(01).                       
+000060        10 SK-NOMEAREA           PIC X(07).                       
+000061        10 FILLER                PIC X(70).                       
+000062                                                                  
+000063*------------------------------- DLOGISTI.TSERVIZI                
+000064 01  FILLER                      PIC X(8) VALUE 'FDLOG651'.       
+000065*    EXEC SQL INCLUDE FDLOG651 END-EXEC.                          
+      *>>((file: FDLOG651))
+000001******************************************************************
+000002* COBOL DECLARATION FOR TABLE DLOGISTI.TSERVIZI                  *
+000003******************************************************************
+000004 01  DCLTSERVIZI.                                                 
+000005*                       CODSERVI                                  
+vCOBOL     
+      *EXEC SQL BEGIN DECLARE SECTION END-EXEC.
+000006     10 L651-CODSERVI        PIC X(6).                            
+vCOBOL     
+      *EXEC SQL END DECLARE SECTION END-EXEC
+                                                 
+000007*                       DESSERVI                                  
+000008     10 L651-DESSERVI        PIC X(40).                           
+000009*                       UNMISURA                                  
+000010     10 L651-UNMISURA        PIC X(2).                            
+000011*                       TIPSERVI                                  
+000012     10 L651-TIPSERVI        PIC X(1).                            
+000013*                       DTCREAZI                                  
+000014     10 L651-DTCREAZI        PIC X(8).                            
+000015*                       DTULTVAR                                  
+000016     10 L651-DTULTVAR        PIC X(8).                            
+000017*                       CODUTVAR                                  
+000018     10 L651-CODUTVAR        PIC X(6).                            
+000019*                       CONTODCD                                  
+000020     10 L651-CONTODCD        PIC X(6).                            
+000021*                       CONTODCA                                  
+000022     10 L651-CONTODCA        PIC X(6).                            
+000023*                       CENCOSTA                                  
+000024     10 L651-CENCOSTA        PIC X(5).                            
+vCOBOL     
+      *EXEC SQL BEGIN DECLARE SECTION END-EXEC.
+000025     10 L651-ESENTIVA        PIC X(1).                            
+vCOBOL     
+      *EXEC SQL END DECLARE SECTION END-EXEC
+                                                 
+000026     10 L651-CONTPROV        PIC X(6).                            
+000027******************************************************************
+000028* THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 12      *
+000029******************************************************************
+      *<<((file: FDLOG651))
+000066                                                                  
+000069*    EXEC SQL                                                     
+      *         INCLUDE SQLCA                                           
+      *    END-EXEC.                                                    
+      *>>((file: SQLCA))
+000001****************************************************************<*
+000002* Copyright (c) 2016-2023 NTT DATA, Inc. All rights reserved.  *<*
+000003* Users of NTT DATA Enterprise COBOL may freely                *<*
+000004* redistribute this copybook.                                  *<*
+000005****************************************************************<*
+000006                                                                  
+000007 01  SQLCA GLOBAL.                                                
+000008     05  SQLCAID                PIC X(8).                         
+000009     05  SQLCABC                PIC S9(9) COMP-5.                 
+000010     05  SQLCODE                PIC S9(9) COMP-5.                 
+000011     05  SQLERRM.                                                 
+000012         49  SQLERRML           PIC S9(4) COMP-5.                 
+000013         49  SQLERRMC           PIC X(254).                       
+000014     05  SQLERRP                PIC X(8).                         
+000015     05  SQLERRD OCCURS 6 TIMES PIC S9(9) COMP-5.                 
+000016     05  SQLWARN.                                                 
+000017         10 SQLWARN0            PIC X(1).                         
+000018         10 SQLWARN1            PIC X(1).                         
+000019         10 SQLWARN2            PIC X(1).                         
+000020         10 SQLWARN3            PIC X(1).                         
+000021         10 SQLWARN4            PIC X(1).                         
+000022         10 SQLWARN5            PIC X(1).                         
+000023         10 SQLWARN6            PIC X(1).                         
+000024         10 SQLWARN7            PIC X(1).                         
+000025     05  SQLSTATE               PIC X(5).                         
+000026     05  SQLEXT                 PIC S9(5) COMP-3 VALUE 1.         
+      *<<((file: SQLCA))
+000070                                                                  
+000071*----------------------------------------------------------------*
+000072 PROCEDURE DIVISION.                                              
+000073*----------------------------------------------------------------*
+000072 VCOBOL-DUMMY-PROCEDURE.
+000074                                                                  
+000075     
+      *EXEC SQL WHENEVER SQLERROR GO TO Z00-ERRORE END-EXEC
+                                                                        
+000076                                                                  
+000077     MOVE 'AVALO45'              TO PPNAME                        
+000078                                    WCOM-PROGNAME.                
+000079                                                                  
+000080     PERFORM A10-OPERAZIONI-INIZIALI                              
+000081        THRU A10-EX.                                              
+000082                                                                  
+000083     IF SK-NOMEAREA = 'FSNET14'                                   
+000084        MOVE SPACES              TO L651-CODSERVI                 
+000085        OPEN INPUT  FATTURAT                                      
+000086        OPEN OUTPUT OUTFATTU                                      
+000087        PERFORM L00-READ-FATTURAT                                 
+000088           THRU L00-EX                                            
+000089        PERFORM B00-ELABORA-FATTURAT                              
+000090           THRU B00-EX                                            
+000091                UNTIL EOF = 'S'                                   
+000092        CLOSE FATTURAT OUTFATTU.                                  
+000093                                                                  
+000094     IF SK-NOMEAREA = 'FSNET15'                                   
+000095        MOVE SPACES              TO L651-CODSERVI                 
+000096        OPEN INPUT  ORDINIVB                                      
+000097        OPEN OUTPUT OUTORDIN                                      
+000098        PERFORM L10-READ-ORDINIVB                                 
+000099           THRU L10-EX                                            
+000100        PERFORM B10-ELABORA-ORDINIVB                              
+000101           THRU B10-EX                                            
+000102                UNTIL EOF = 'S'                                   
+000103        CLOSE ORDINIVB OUTORDIN.                                  
+000104                                                                  
+000105     MOVE 'P'                    TO PPROUTIN.                     
+000106     PERFORM Z90-READPRIN                                         
+000107        THRU Z90-EX.                                              
+000108                                                                  
+000109     MOVE ZERO                   TO  RETURN-CODE.                 
+000110                                                                  
+000111     CALL "CCF_SET_RETCODE" USING RETURN-CODE                     
+000112     STOP RUN.                                                    
+000113                                                                  
+000114*-------------------------------------------------------*         
+000115 A10-OPERAZIONI-INIZIALI.                                         
+000116*-------------------------------------------------------*         
+000117                                                                  
+000118*--- SCHEDA PARAMETRO                                             
+000119     MOVE 'S'                    TO PPROUTIN                      
+000120     PERFORM Z90-READPRIN                                         
+000121        THRU Z90-EX.                                              
+000122     MOVE PPSK1                  TO SK-SKPARAME.                  
+000123     IF PPSTAT NOT EQUAL '****'                                   
+000124        MOVE 'MANCA SK-PARAMETRO'                                 
+000125                                 TO PPMESSAG                      
+000126        MOVE 'M'                 TO PPROUTIN                      
+000127        PERFORM Z90-READPRIN                                      
+000128           THRU Z90-EX                                            
+000129        PERFORM Z00-ERRORE                                        
+000130           THRU Z00-EX.                                           
+000131                                                                  
+000132     IF SK-NOMEAREA NOT = 'FSNET14' AND                           
+000133        SK-NOMEAREA NOT = 'FSNET15'                               
+000134        MOVE SPACES              TO PPMESSAG                      
+000135        STRING 'ERRORE SK-PARAM: NOME AREA ERRATO: '              
+000136               SK-NOMEAREA                                        
+000137             DELIMITED BY SIZE INTO PPMESSAG                      
+000138        MOVE 'M'                 TO PPROUTIN                      
+000139        PERFORM Z90-READPRIN                                      
+000140           THRU Z90-EX                                            
+000141        PERFORM Z00-ERRORE                                        
+000142           THRU Z00-EX.                                           
+000143                                                                  
+000144 A10-EX. EXIT.                                                    
+000145*----------------------------------------------------------------*
+000146 B00-ELABORA-FATTURAT.                                            
+000147*----------------------------------------------------------------*
+000148                                                                  
+000149     IF N14-CODSERVI NOT > ' '                                    
+000150        MOVE '15GT01'            TO N14-CODSERVI.                 
+000151                                                                  
+000152     IF N14-CODSERVI(1:6) NOT = L651-CODSERVI                     
+000153        MOVE N14-CODSERVI(1:6)   TO L651-CODSERVI                 
+000154        PERFORM L20-SELECT-SERVIZI                                
+000155           THRU L20-EX.                                           
+000156                                                                  
+000157     MOVE L651-ESENTIVA          TO N14-ESENTIVA.                 
+000158                                                                  
+000159     PERFORM W00-WRITE-OUTFATTU                                   
+000160        THRU W00-EX.                                              
+000161                                                                  
+000162     PERFORM L00-READ-FATTURAT                                    
+000163        THRU L00-EX.                                              
+000164                                                                  
+000165 B00-EX. EXIT.                                                    
+000166*----------------------------------------------------------------*
+000167 B10-ELABORA-ORDINIVB.                                            
+000168*----------------------------------------------------------------*
+000169                                                                  
+000170     IF N15-CODSERVI NOT = L651-CODSERVI                          
+000171        MOVE N15-CODSERVI        TO L651-CODSERVI                 
+000172        PERFORM L20-SELECT-SERVIZI                                
+000173           THRU L20-EX.                                           
+000174                                                                  
+000175     MOVE L651-ESENTIVA          TO N15-ESENTIVA.                 
+000176                                                                  
+000177     PERFORM W10-WRITE-OUTORDIN                                   
+000178        THRU W10-EX.                                              
+000179                                                                  
+000180     PERFORM L10-READ-ORDINIVB                                    
+000181        THRU L10-EX.                                              
+000182                                                                  
+000183 B10-EX. EXIT.                                                    
+000184*----------------------------------------------------------------*
+000185 L00-READ-FATTURAT.                                               
+000186*----------------------------------------------------------------*
+000187                                                                  
+000188     MOVE 'N'                           TO EOF.                   
+000189     READ FATTURAT INTO FSNET14                                   
+000190          AT END               MOVE 'S' TO EOF.                   
+000191                                                                  
+000192     IF EOF = 'N'                                                 
+000193        MOVE 'U'                 TO PPROUTIN                      
+000194        MOVE 'S'                 TO PPTPFILE                      
+000195        MOVE 'R'                 TO PPTPOPER                      
+000196        MOVE 'FATTURAT'          TO PPNMFILE                      
+000197        PERFORM Z90-READPRIN                                      
+000198           THRU Z90-EX.                                           
+000199                                                                  
+000200 L00-EX. EXIT.                                                    
+000201*----------------------------------------------------------------*
+000202 L10-READ-ORDINIVB.                                               
+000203*----------------------------------------------------------------*
+000204                                                                  
+000205     MOVE 'N'                           TO EOF.                   
+000206     READ ORDINIVB INTO FSNET15                                   
+000207          AT END               MOVE 'S' TO EOF.                   
+000208                                                                  
+000209     IF EOF = 'N'                                                 
+000210        MOVE 'U'                 TO PPROUTIN                      
+000211        MOVE 'S'                 TO PPTPFILE                      
+000212        MOVE 'R'                 TO PPTPOPER                      
+000213        MOVE 'ORDINIVB'          TO PPNMFILE                      
+000214        PERFORM Z90-READPRIN                                      
+000215           THRU Z90-EX.                                           
+000216                                                                  
+000217 L10-EX. EXIT.                                                    
+000218*----------------------------------------------------------------*
+000219 L20-SELECT-SERVIZI.                                              
+000220*----------------------------------------------------------------*
+000221                                                                  
+000222     MOVE 'L20-'                 TO WCOM-CODABEND                 
+000223     MOVE 'SELECT'               TO WCOM-FILEFUNZ                 
+000224     MOVE 'SERVIZI'              TO WCOM-FILENOME                 
+000225     MOVE L651-CODSERVI          TO WCOM-FILECTRL.                
+000226                                                                  
+000227     MOVE SPACES                 TO L651-ESENTIVA.                
+000228                                                                  
+000230     
+      *EXEC SQL 
+      *SELECT ESENTIVA                                         
+000231*            INTO :L651-ESENTIVA                                   
+000232*            FROM DLOGISTI.TSERVIZI                                
+000233*           WHERE CODSERVI = :L651-CODSERVI                        
+000234*     END-EXEC
+           CALL "sqlgstrt" USING
+              BY CONTENT SQLA-PROGRAM-ID
+              BY VALUE 0
+              BY REFERENCE SQLCA
+
+           MOVE 1 TO SQL-STMT-ID 
+           MOVE 1 TO SQLDSIZE 
+           MOVE 2 TO SQLDA-ID 
+
+           CALL "sqlgaloc" USING
+               BY VALUE SQLDA-ID 
+                        SQLDSIZE
+                        SQL-STMT-ID
+                        0
+
+           MOVE 6 TO SQL-HOST-VAR-LENGTH
+           MOVE 452 TO SQL-DATA-TYPE
+           MOVE 0 TO SQLVAR-INDEX
+           MOVE 2 TO SQLDA-ID
+
+           CALL "sqlgstlv" USING 
+            BY VALUE SQLDA-ID
+                     SQLVAR-INDEX
+                     SQL-DATA-TYPE
+                     SQL-HOST-VAR-LENGTH
+            BY REFERENCE L651-CODSERVI
+            BY VALUE 0
+                     0
+
+           MOVE 2 TO SQL-STMT-ID 
+           MOVE 1 TO SQLDSIZE 
+           MOVE 3 TO SQLDA-ID 
+
+           CALL "sqlgaloc" USING
+               BY VALUE SQLDA-ID 
+                        SQLDSIZE
+                        SQL-STMT-ID
+                        0
+
+           MOVE 1 TO SQL-HOST-VAR-LENGTH
+           MOVE 452 TO SQL-DATA-TYPE
+           MOVE 0 TO SQLVAR-INDEX
+           MOVE 3 TO SQLDA-ID
+
+           CALL "sqlgstlv" USING 
+            BY VALUE SQLDA-ID
+                     SQLVAR-INDEX
+                     SQL-DATA-TYPE
+                     SQL-HOST-VAR-LENGTH
+            BY REFERENCE L651-ESENTIVA
+            BY VALUE 0
+                     0
+
+           MOVE 3 TO SQL-OUTPUT-SQLDA-ID 
+           MOVE 2 TO SQL-INPUT-SQLDA-ID 
+           MOVE 1 TO SQL-SECTIONUMBER 
+           MOVE 24 TO SQL-CALL-TYPE 
+
+           CALL "sqlgcall" USING
+            BY VALUE SQL-CALL-TYPE 
+                     SQL-SECTIONUMBER
+                     SQL-INPUT-SQLDA-ID
+                     SQL-OUTPUT-SQLDA-ID
+                     0
+             IF SQLCODE IN SQLCA < 0 THEN
+               CALL "sqlgstop" USING
+                 BY VALUE 0
+               GO TO Z00-ERRORE
+             END-IF 
+
+           CALL "sqlgstop" USING
+            BY VALUE 0
+                                                                        
+000235                                                                  
+000236     IF SQLCODE = 0                                               
+000237        MOVE 'U'                 TO PPROUTIN                      
+000238        MOVE 'D'                 TO PPTPFILE                      
+000239        MOVE 'R'                 TO PPTPOPER                      
+000240        MOVE 'SERVIZI'           TO PPNMFILE                      
+000241        PERFORM Z90-READPRIN                                      
+000242           THRU Z90-EX.                                           
+000243                                                                  
+000244 L20-EX. EXIT.                                                    
+000245*----------------------------------------------------------------*
+000246 W00-WRITE-OUTFATTU.                                              
+000247*----------------------------------------------------------------*
+000248                                                                  
+000249     WRITE REC-OUTFATTU FROM FSNET14.                             
+000250                                                                  
+000251     MOVE 'U'                    TO PPROUTIN.                     
+000252     MOVE 'S'                    TO PPTPFILE.                     
+000253     MOVE 'A'                    TO PPTPOPER.                     
+000254     MOVE 'OUTFATTU'             TO PPNMFILE.                     
+000255     PERFORM Z90-READPRIN                                         
+000256        THRU Z90-EX.                                              
+000257                                                                  
+000258 W00-EX. EXIT.                                                    
+000259*----------------------------------------------------------------*
+000260 W10-WRITE-OUTORDIN.                                              
+000261*----------------------------------------------------------------*
+000262                                                                  
+000263     WRITE REC-OUTORDIN FROM FSNET15.                             
+000264                                                                  
+000265     MOVE 'U'                    TO PPROUTIN.                     
+000266     MOVE 'S'                    TO PPTPFILE.                     
+000267     MOVE 'A'                    TO PPTPOPER.                     
+000268     MOVE 'OUTORDIN'             TO PPNMFILE.                     
+000269     PERFORM Z90-READPRIN                                         
+000270        THRU Z90-EX.                                              
+000271                                                                  
+000272 W10-EX. EXIT.                                                    
+000273*----------------------------------------------------------------*
+000274 Z00-ERRORE.                                                      
+000275*----------------------------------------------------------------*
+000276                                                                  
+000277     MOVE 'M'                    TO PPROUTIN.                     
+000278     PERFORM Z90-READPRIN                                         
+000279        THRU Z90-EX.                                              
+000280                                                                  
+000281     MOVE 'SCDB2ER '             TO PPCALL.                       
+000282     CALL PPCALL                 USING DCPARM                     
+000283                                       DCDB2ER                    
+000284                                       SQLCA.                     
+000285 Z00-EX. EXIT.                                                    
+000286*----------------------------------------------------------------*
+000287 Z90-READPRIN.                                                    
+000288*----------------------------------------------------------------*
+000289                                                                  
+000290     MOVE 'READPRIN '            TO PPCALL                        
+000291     CALL PPCALL                 USING DCPARM.                    
+000292                                                                  
+000293 Z90-EX. EXIT.                                                   

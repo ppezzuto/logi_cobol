@@ -1,0 +1,27 @@
+      ******************************************************************
+      * DCLGEN TABLE(DCONTCLI.TSOLLECITI)                              *
+      *        LIBRARY(TESTPO.LIB.DSECT(FDCLI865))                     *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE DCONTCLI.TSOLLECITI TABLE
+           ( CODSOCIE                       CHAR(2) NOT NULL,
+             GRUPSOLL                       CHAR(1) NOT NULL,
+             TIPOSOLL                       CHAR(1) NOT NULL,
+             CODILING                       CHAR(1) NOT NULL,
+             NUMPROG5                       DECIMAL(5, 0) NOT NULL,
+             RIGASOLL                       CHAR(80) NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE DCONTCLI.TSOLLECITI                *
+      ******************************************************************
+       01  DCLTSOLLECITI.
+           10 C865-CODSOCIE        PIC X(2).
+           10 C865-GRUPSOLL        PIC X(1).
+           10 C865-TIPOSOLL        PIC X(1).
+           10 C865-CODILING        PIC X(1).
+           10 C865-NUMPROG5        PIC S99999V USAGE COMP-3.
+           10 C865-RIGASOLL        PIC X(80).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 6       *
+      ******************************************************************

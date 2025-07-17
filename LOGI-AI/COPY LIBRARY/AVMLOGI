@@ -1,0 +1,146 @@
+      *   Micro Focus Enterprise Developer  2.2.01204 
+      *   Micro Focus BMS Screen Painter (ver BMSIDE_2-2-20) 
+      *   MapSet Name   AVMLOGI 
+      *   Date Created  04/27/2022 
+      *   Time Created  16:36:20 
+ 
+      *  Input Data For Map AVILOGI 
+         01 AVILOGII. 
+            03 FILLER                         PIC X(12). 
+            03 LOGI-CODSOCIEL                 PIC S9(4) COMP. 
+            03 LOGI-CODSOCIEF                 PIC X. 
+            03 FILLER REDEFINES LOGI-CODSOCIEF. 
+               05 LOGI-CODSOCIEA                 PIC X. 
+            03 FILLER                         PIC X(4). 
+            03 LOGI-CODSOCIEI                 PIC X(2). 
+            03 LOGI-NOMSOCIEL                 PIC S9(4) COMP. 
+            03 LOGI-NOMSOCIEF                 PIC X. 
+            03 FILLER REDEFINES LOGI-NOMSOCIEF. 
+               05 LOGI-NOMSOCIEA                 PIC X. 
+            03 FILLER                         PIC X(4). 
+            03 LOGI-NOMSOCIEI                 PIC X(16). 
+            03 LOGI-MAPDATAL                  PIC S9(4) COMP. 
+            03 LOGI-MAPDATAF                  PIC X. 
+            03 FILLER REDEFINES LOGI-MAPDATAF. 
+               05 LOGI-MAPDATAA                  PIC X. 
+            03 FILLER                         PIC X(4). 
+            03 LOGI-MAPDATAI                  PIC X(10). 
+            03 LOGI-MAPORAXL                  PIC S9(4) COMP. 
+            03 LOGI-MAPORAXF                  PIC X. 
+            03 FILLER REDEFINES LOGI-MAPORAXF. 
+               05 LOGI-MAPORAXA                  PIC X. 
+            03 FILLER                         PIC X(4). 
+            03 LOGI-MAPORAXI                  PIC X(8). 
+            03 LOGI-ORA29XXXL                 PIC S9(4) COMP. 
+            03 LOGI-ORA29XXXF                 PIC X. 
+            03 FILLER REDEFINES LOGI-ORA29XXXF. 
+               05 LOGI-ORA29XXXA                 PIC X. 
+            03 FILLER                         PIC X(4). 
+            03 LOGI-ORA29XXXI                 PIC X(5). 
+            03 LOGI-ORA50XXXL                 PIC S9(4) COMP. 
+            03 LOGI-ORA50XXXF                 PIC X. 
+            03 FILLER REDEFINES LOGI-ORA50XXXF. 
+               05 LOGI-ORA50XXXA                 PIC X. 
+            03 FILLER                         PIC X(4). 
+            03 LOGI-ORA50XXXI                 PIC X(5). 
+            03 LOGI-ORA51XXXL                 PIC S9(4) COMP. 
+            03 LOGI-ORA51XXXF                 PIC X. 
+            03 FILLER REDEFINES LOGI-ORA51XXXF. 
+               05 LOGI-ORA51XXXA                 PIC X. 
+            03 FILLER                         PIC X(4). 
+            03 LOGI-ORA51XXXI                 PIC X(5). 
+            03 LOGI-NRSCELTAL                 PIC S9(4) COMP. 
+            03 LOGI-NRSCELTAF                 PIC X. 
+            03 FILLER REDEFINES LOGI-NRSCELTAF. 
+               05 LOGI-NRSCELTAA                 PIC X. 
+            03 FILLER                         PIC X(4). 
+            03 LOGI-NRSCELTAI                 PIC X(2). 
+            03 LOGI-CODCLIENL                 PIC S9(4) COMP. 
+            03 LOGI-CODCLIENF                 PIC X. 
+            03 FILLER REDEFINES LOGI-CODCLIENF. 
+               05 LOGI-CODCLIENA                 PIC X. 
+            03 FILLER                         PIC X(4). 
+            03 LOGI-CODCLIENI                 PIC X(5). 
+            03 LOGI-RAGFATTUL                 PIC S9(4) COMP. 
+            03 LOGI-RAGFATTUF                 PIC X. 
+            03 FILLER REDEFINES LOGI-RAGFATTUF. 
+               05 LOGI-RAGFATTUA                 PIC X. 
+            03 FILLER                         PIC X(4). 
+            03 LOGI-RAGFATTUI                 PIC X(24). 
+            03 LOGI-MESSAGGIL                 PIC S9(4) COMP. 
+            03 LOGI-MESSAGGIF                 PIC X. 
+            03 FILLER REDEFINES LOGI-MESSAGGIF. 
+               05 LOGI-MESSAGGIA                 PIC X. 
+            03 FILLER                         PIC X(4). 
+            03 LOGI-MESSAGGII                 PIC X(73). 
+ 
+      *  Output Data For Map AVILOGI 
+         01 AVILOGIO REDEFINES AVILOGII. 
+            03 FILLER                         PIC X(12). 
+            03 FILLER                         PIC X(3). 
+            03 LOGI-CODSOCIEC                 PIC X. 
+            03 LOGI-CODSOCIEP                 PIC X. 
+            03 LOGI-CODSOCIEH                 PIC X. 
+            03 LOGI-CODSOCIEV                 PIC X. 
+            03 LOGI-CODSOCIEO                 PIC X(2). 
+            03 FILLER                         PIC X(3). 
+            03 LOGI-NOMSOCIEC                 PIC X. 
+            03 LOGI-NOMSOCIEP                 PIC X. 
+            03 LOGI-NOMSOCIEH                 PIC X. 
+            03 LOGI-NOMSOCIEV                 PIC X. 
+            03 LOGI-NOMSOCIEO                 PIC X(16). 
+            03 FILLER                         PIC X(3). 
+            03 LOGI-MAPDATAC                  PIC X. 
+            03 LOGI-MAPDATAP                  PIC X. 
+            03 LOGI-MAPDATAH                  PIC X. 
+            03 LOGI-MAPDATAV                  PIC X. 
+            03 LOGI-MAPDATAO                  PIC X(10). 
+            03 FILLER                         PIC X(3). 
+            03 LOGI-MAPORAXC                  PIC X. 
+            03 LOGI-MAPORAXP                  PIC X. 
+            03 LOGI-MAPORAXH                  PIC X. 
+            03 LOGI-MAPORAXV                  PIC X. 
+            03 LOGI-MAPORAXO                  PIC 99.99.99. 
+            03 FILLER                         PIC X(3). 
+            03 LOGI-ORA29XXXC                 PIC X. 
+            03 LOGI-ORA29XXXP                 PIC X. 
+            03 LOGI-ORA29XXXH                 PIC X. 
+            03 LOGI-ORA29XXXV                 PIC X. 
+            03 LOGI-ORA29XXXO                 PIC X(5). 
+            03 FILLER                         PIC X(3). 
+            03 LOGI-ORA50XXXC                 PIC X. 
+            03 LOGI-ORA50XXXP                 PIC X. 
+            03 LOGI-ORA50XXXH                 PIC X. 
+            03 LOGI-ORA50XXXV                 PIC X. 
+            03 LOGI-ORA50XXXO                 PIC X(5). 
+            03 FILLER                         PIC X(3). 
+            03 LOGI-ORA51XXXC                 PIC X. 
+            03 LOGI-ORA51XXXP                 PIC X. 
+            03 LOGI-ORA51XXXH                 PIC X. 
+            03 LOGI-ORA51XXXV                 PIC X. 
+            03 LOGI-ORA51XXXO                 PIC X(5). 
+            03 FILLER                         PIC X(3). 
+            03 LOGI-NRSCELTAC                 PIC X. 
+            03 LOGI-NRSCELTAP                 PIC X. 
+            03 LOGI-NRSCELTAH                 PIC X. 
+            03 LOGI-NRSCELTAV                 PIC X. 
+            03 LOGI-NRSCELTAO                 PIC X(2). 
+            03 FILLER                         PIC X(3). 
+            03 LOGI-CODCLIENC                 PIC X. 
+            03 LOGI-CODCLIENP                 PIC X. 
+            03 LOGI-CODCLIENH                 PIC X. 
+            03 LOGI-CODCLIENV                 PIC X. 
+            03 LOGI-CODCLIENO                 PIC X(5). 
+            03 FILLER                         PIC X(3). 
+            03 LOGI-RAGFATTUC                 PIC X. 
+            03 LOGI-RAGFATTUP                 PIC X. 
+            03 LOGI-RAGFATTUH                 PIC X. 
+            03 LOGI-RAGFATTUV                 PIC X. 
+            03 LOGI-RAGFATTUO                 PIC X(24). 
+            03 FILLER                         PIC X(3). 
+            03 LOGI-MESSAGGIC                 PIC X. 
+            03 LOGI-MESSAGGIP                 PIC X. 
+            03 LOGI-MESSAGGIH                 PIC X. 
+            03 LOGI-MESSAGGIV                 PIC X. 
+            03 LOGI-MESSAGGIO                 PIC X(73). 
+ 

@@ -1,0 +1,1575 @@
+      *((program: AVBFT20.cblx))
+000001*-------------* PROGRAMMA BATCH COBOL2 DB2 *---------------------*
+000002 ID DIVISION.                                                     
+000003*-------------*                                                   
+000004 PROGRAM-ID. AVBFT20.                         
+000005                                                                  
+000006*----------------------------------------------------------------*
+000007* ==> ATENZIONE MODIFICATO PER OPLA                             -*
+000008*----------------------------------------------------------------*
+000009* IL PROGRAMMA GESTISCE UN FILE CHE ARRIVA DA NETMOVER CON I DATI*
+000010* RELATIVI ALLE PREFATTURE PASSIVE DA CARICARE SULLE BT SAP.     *
+000011*----------------------------------------------------------------*
+000012 ENVIRONMENT DIVISION.                                            
+000013*---------------------*                                           
+000014 CONFIGURATION SECTION.                                           
+000015 SPECIAL-NAMES.                                                   
+000016     DECIMAL-POINT IS COMMA.                                      
+000017                                                                  
+000018 INPUT-OUTPUT SECTION.                                            
+000019 FILE-CONTROL.                                                    
+000020     SELECT  FILEINP  ASSIGN UT-S-FILEINP.                        
+000021     SELECT  SCARTI   ASSIGN UT-S-SCARTI.                         
+000022     SELECT  NORDWEST ASSIGN UT-S-NORDWEST.                       
+000023     SELECT  FILEOUT  ASSIGN UT-S-FILEOUT.                        
+000024     SELECT  FILECOS  ASSIGN UT-S-FILECOS.                        
+000025                                                                  
+000026 DATA DIVISION.                                                   
+000027*--------------*                                                  
+000028 FILE SECTION.                                                    
+000029 FD  FILEINP                                                      
+000030     RECORDING MODE IS F                                          
+000031     BLOCK CONTAINS  0 RECORDS.                                   
+000032 01  REC-FILEINP                 PIC X(255).                      
+000033 FD  NORDWEST                                                     
+000034     RECORDING MODE IS F                                          
+000035     BLOCK CONTAINS  0 RECORDS.                                   
+000036 01  REC-NORDWEST                PIC X(255).                      
+000037 FD  SCARTI                                                       
+000038     RECORDING MODE IS F                                          
+000039     BLOCK CONTAINS  0 RECORDS.                                   
+000040 01  REC-SCARTI                  PIC X(255).                      
+000041 FD  FILEOUT                                                      
+000042     RECORDING MODE IS F                                          
+000043     BLOCK CONTAINS  0 RECORDS.                                   
+000044 01  REC-FILEOUT                 PIC X(120).                      
+000045 FD  FILECOS                                                      
+000046     RECORDING MODE IS F                                          
+000047     BLOCK CONTAINS  0 RECORDS.                                   
+000048 01  REC-FILECOS                 PIC X(120).                      
+000049                                                                  
+000050 WORKING-STORAGE SECTION.
+
+       01  SQLDA-ID pic 9(4) comp-5.
+       01  SQLDSIZE pic 9(4) comp-5.
+       01  SQL-STMT-ID pic 9(4) comp-5.
+       01  SQLVAR-INDEX pic 9(4) comp-5.
+       01  SQL-DATA-TYPE pic 9(4) comp-5.
+       01  SQL-HOST-VAR-LENGTH pic 9(9) comp-5.
+       01  SQL-S-HOST-VAR-LENGTH pic 9(9) comp-5.
+       01  SQL-S-LITERAL pic X(258).
+       01  SQL-LITERAL1 pic X(130).
+       01  SQL-LITERAL2 pic X(130).
+       01  SQL-LITERAL3 pic X(130).
+       01  SQL-LITERAL4 pic X(130).
+       01  SQL-LITERAL5 pic X(130).
+       01  SQL-LITERAL6 pic X(130).
+       01  SQL-LITERAL7 pic X(130).
+       01  SQL-LITERAL8 pic X(130).
+       01  SQL-LITERAL9 pic X(130).
+       01  SQL-LITERAL10 pic X(130).
+       01  SQL-IS-LITERAL pic 9(4) comp-5 value 1.
+       01  SQL-IS-INPUT-HVAR pic 9(4) comp-5 value 2.
+       01  SQL-CALL-TYPE pic 9(4) comp-5.
+       01  SQL-SECTIONUMBER pic 9(4) comp-5.
+       01  SQL-INPUT-SQLDA-ID pic 9(4) comp-5.
+       01  SQL-OUTPUT-SQLDA-ID pic 9(4) comp-5.
+       01  SQLA-PROGRAM-ID.
+           05 SQL-PART1 pic 9(4) COMP-5 value 172.
+           05 SQL-PART2 pic X(6) value "AEAQAI".
+           05 SQL-PART3 pic X(24) value "fA5sMfMo01111 2         ".
+           05 SQL-PART4 pic 9(4) COMP-5 value 8.
+           05 SQL-PART5 pic X(8) value "DB2XMT  ".
+           05 SQL-PART6 pic X(120) value LOW-VALUES.
+           05 SQL-PART7 pic 9(4) COMP-5 value 8.
+           05 SQL-PART8 pic X(8) value "AVBFT20 ".
+           05 SQL-PART9 pic X(120) value LOW-VALUES.
+                                                                        
+000051 01  FILLER                      PIC X(8)  VALUE '*DCPARM*'.      
+000052*    COPY DCPARM.                                                 
+      *>>((file: DCPARM))
+000001***************************************************************** 
+000002*******                                                         * 
+000003*******       A R E A   P A R A M E T R I C A       *COBOL*     * 
+000004*******                                                         * 
+000005***************************************************************** 
+000006 01  DCPARM.                                                      
+000007*******  PPNAME   = NOME PROGRAMMA                                
+000008     02  PPNAME           PIC X(8)    VALUE SPACES.               
+000009*******  PPROUTIN = ROUTINE DA ESEGUIRE                           
+000010     02  PPROUTIN         PIC X       VALUE SPACES.               
+000011     02  PPSTAT           PIC X(4)    VALUE SPACES.               
+000012*******  PPNUSK   = NUMERO DI SCHEDE X LA FUNZIONE -N-            
+000013     02  PPNUSK           PIC X(2)    VALUE SPACES.               
+000014     02  PPFIRST          PIC X       VALUE SPACES.               
+000015*******                                                           
+000016*********************** SKEDE PARAMETRO - MAX 10 **************** 
+000017*******                                                           
+000018     02  SK-PARM.                                                 
+000019         05  PPSK1            PIC X(80)   VALUE SPACES.           
+000020         05  PPSK2            PIC X(80)   VALUE SPACES.           
+000021         05  PPSK3            PIC X(80)   VALUE SPACES.           
+000022         05  PPSK4            PIC X(80)   VALUE SPACES.           
+000023         05  PPSK5            PIC X(80)   VALUE SPACES.           
+000024         05  PPSK6            PIC X(80)   VALUE SPACES.           
+000025         05  PPSK7            PIC X(80)   VALUE SPACES.           
+000026         05  PPSK8            PIC X(80)   VALUE SPACES.           
+000027         05  PPSK9            PIC X(80)   VALUE SPACES.           
+000028         05  PPSK10           PIC X(80)   VALUE SPACES.           
+000029         05  PPSK11           PIC X(80)   VALUE SPACES.           
+000030     02  TAB-SK-PARM REDEFINES SK-PARM.                           
+000031         05  EL-SK-PARM OCCURS 11 TIMES.                          
+000032             10  NAME-SK-PARM     PIC XX.                         
+000033             10  FILLER           PIC X.                          
+000034             10  DATA-SK-PARM     PIC X(77).                      
+000035*******                                                           
+000036*********************** ELEMENTO DI RICERCA ********************* 
+000037*******                                                           
+000038*******  PPNMFILE  = NOME FILE                                    
+000039     02  PPNMFILE         PIC X(7)    VALUE SPACES.               
+000040*******  PPTPFILE  = TIPO FILE                                    
+000041     02  PPTPFILE         PIC X(1)    VALUE SPACES.               
+000042*******  PPTPOPER  = TIPO OPERAZIONE                              
+000043     02  PPTPOPER         PIC X(1)    VALUE SPACES.               
+000044     02  FILLER           PIC X(7)    VALUE SPACES.               
+000045*******                                                           
+000046*********************** TABELLA DI 30 ELEMENTI ****************** 
+000047*******                                                           
+000048     02  TAB-CONTATORI.                                           
+000049         05  EL-CONTATORI OCCURS 30 TIMES.                        
+000050             10  EL-PPNMFILE      PIC X(7)        VALUE SPACES.   
+000051             10  EL-PPTPFILE      PIC X           VALUE SPACES.   
+000052             10  EL-PPTPOPER      PIC X           VALUE SPACES.   
+000053             10  EL-CONTATOR      PIC 9(9) COMP-3 VALUE ZEROES.   
+000054             10  EL-FILLER        PIC XX          VALUE SPACES.   
+000055*    02  FILLER           PIC X(7)     VALUE SPACES.              
+000056*******              TIPO FILE                                    
+000057*    02  FILLER           PIC X(1)     VALUE SPACES.              
+000058*******              TIPO OPERAZIONE                              
+000059*    02  FILLER           PIC X(1)     VALUE SPACES.              
+000060*******              NUMERO OPERAZIONI                            
+000061*    02  FILLER           PIC 9(9)     COMP-3    VALUE ZERO.      
+000062*    02  FILLER           PIC X(2)     VALUE SPACES.              
+000063*******  29 CAMPI DA 16 BYTES, IN TOTALE 464 BYTES                
+000064*    02  FILLER           PIC X(464)   VALUE SPACES.              
+000065*******                                                           
+000066*********************** STAMPA MESSAGGI ************************* 
+000067*******                                                           
+000068*******  PPMESSAG  = MESSAGGIO DA STAMPARE                        
+000069     02  PPMESSAG         PIC X(132)  VALUE SPACES.               
+000070     02  FILLER           PIC X(4)    VALUE SPACES.               
+000071*******                                                           
+000072*********************** DATE DA TABE TABPRODA ******************* 
+000073*******                                                           
+000074*******  DATA-PROG = NOME ELEMENTO DI TABE TABPRODA               
+000075     02  DATA-PROG        PIC X(7)    VALUE SPACES.               
+000076*******  DATA-TIPO = TIPO DI DATA  DI TABE TABPRODA               
+000077     02  DATA-TIPO        PIC X       VALUE SPACES.               
+000078*******  DATA-INIZ = DATA INIZIO PERIODO                          
+000079     02  DATA-INIZ.                                               
+000080         05  GG-INIZ.                                             
+000081             10  SS-CORSO PIC XX      VALUE SPACES.               
+000082         05  MM-INIZ      PIC XX      VALUE SPACES.               
+000083         05  AA-INIZ      PIC XX      VALUE SPACES.               
+000084*******  DATA-FINE = DATA FINE PERIODO                            
+000085     02  DATA-FINE.                                               
+000086         05  GG-FINE      PIC XX      VALUE SPACES.               
+000087         05  MM-FINE      PIC XX      VALUE SPACES.               
+000088         05  AA-FINE      PIC XX      VALUE SPACES.               
+000089     02  FILLER           PIC X(4)    VALUE SPACES.               
+000090*******                                                           
+000091*********************** CALL GENERALIZZATA ********************** 
+000092*******                                                           
+000093*******  PPCALL    = NOME MODULO X CALLER                         
+000094     02  PPCALL           PIC X(8)    VALUE SPACES.               
+000095*******                                                           
+000096***************************************************************** 
+000097*  EJECT                                                          
+      *<<((file: DCPARM))
+000053 01  FILLER                      PIC X(8)  VALUE 'DCDB2ER*'.      
+000054*    COPY DCDB2ER.                                                
+      *>>((file: DCDB2ER))
+000001******************************************************************
+000002*****               AREA PER MODULO SCDB2ER                  *****
+000003******************************************************************
+000004 01  DCDB2ER.                                                     
+000005     02 WCOM-LUNGHEZZ         PIC S9(3) COMP-3 VALUE +171.        
+000006     02 WCOM-FILEFUNZ         PIC X(10).                          
+000007     02 WCOM-FILENOME         PIC X(30).                          
+000008     02 WCOM-FILECTRL         PIC X(30).                          
+000009     02 WCOM-MESSAGES         PIC X(80).                          
+000010     02 WCOM-CODABEND         PIC X(4).                           
+000011     02 MESS-CODERROR         PIC X(6).                           
+000012     02 WSWERROR              PIC X.                              
+000013        88 ERRORE             VALUE '*'.                          
+000014     02 WCOM-PROGNAME         PIC X(8).                           
+      *<<((file: DCDB2ER))
+000055 01  FILLER                      PIC X(8)  VALUE 'DCWDTEL*'.      
+000056*    COPY DCWDTEL.                                                
+      *>>((file: DCWDTEL))
+000001***************************************************************** 
+000002******         AREA PASSAGGIO CHIAMATA                     ****** 
+000003******             MODULO  SCTDTEL (LENGTH 100)            ****** 
+000004***************************************************************** 
+000005 01  DCWDTEL.                                                     
+000006*                         ZEROES SE OK  ALTRIMENTI SQLCODE        
+000007     05 DTEL-RETCOD              PIC S9(3).                       
+000008*                         R = LETTURA   U = AGGIORNAMENTO         
+000009     05 DTEL-TIPORICH            PIC X.                           
+000010     05 DTEL-SIGLDATA            PIC X(8).                        
+000011*         G=AAAAAAA   S=SETTIMA   M=MENSILE   A=ANNUALE   W=WEEK  
+000012     05 DTEL-DATATIPO            PIC X(1).                        
+000013*                                                                 
+000014     05 DTEL-DTINELAB            PIC X(8).                        
+000015     05 DTEL-TMINELAB            PIC X(6).                        
+000016     05 DTEL-DTFIELAB            PIC X(8).                        
+000017     05 DTEL-TMFIELAB            PIC X(6).                        
+000018     05 FILLER                   PIC X(59).                       
+      *<<((file: DCWDTEL))
+000057                                                                  
+000058* TRACCIATO DEL FILE DI INPUT                                     
+000059 01  FILLER                      PIC X(8)  VALUE 'FSNET03*'.      
+000060*    COPY FSNET03.                                                
+      *>>((file: FSNET03))
+000001******************************************************************
+000002** -NETMOVER- DSECT PER INVIO DATI AL GTM                       **
+000003**                   LUNGHEZZA REC. 255                         **
+000004******************************************************************
+000005 01  FSNET03.                                                     
+000006     05 N03-SOCIENET              PIC X(10).                      
+000007     05 N03-NRPRFATT              PIC X(10).                      
+000008     05 N03-TPPRFATT              PIC X(10).                      
+000009     05 N03-NUMPROGR              PIC 9(05).                      
+000010     05 N03-DTPRFATT              PIC 9(08).                      
+000011     05 N03-CODFORNI              PIC X(10).                      
+000012     05 N03-CONTODCE              PIC X(10).                      
+000013     05 N03-CENCOSTO              PIC X(10).                      
+000014     05 N03-ANAGPROP              PIC X(10).                      
+000015     05 N03-CODSOCIE              PIC X(10).                      
+000016     05 N03-ANAGRECE              PIC X(10).                      
+000017     05 N03-SERVIZIO              PIC X(12).                      
+000018     05 N03-MEZZOXXX              PIC X(12).                      
+000019     05 N03-ANAGENTE              PIC X(20).                      
+000020     05 N03-TIPOMOVI              PIC X(10).                      
+000021     05 N03-CODDIVIS              PIC X(03).                      
+000022     05 N03-IMPORTOX              PIC 9(12)V999.                  
+000023     05 N03-COMMESSA              PIC X(15).                      
+000024     05 N03-STATIST6              PIC X(20).                      
+000025     05 N03-NAZIOSCA              PIC X(20).                      
+000026     05 N03-TIPOPROD              PIC X(20).                      
+000027     05 N03-FILLERXX              PIC X(05).                      
+      *<<((file: FSNET03))
+000061* TRACCIATO DEL FILE DI OUTPUT                                    
+000062 01  FILLER                      PIC X(8)  VALUE 'FSNET09*'.      
+000063*    COPY FSNET09.                                                
+      *>>((file: FSNET09))
+000001******************************************************************
+000002** -NETMOVER- DSECT PER INVIO DATI A GTM (DAZI/DDT/RDT)         **
+000003**                   LUNGHEZZA REC. 120                         **
+000004******************************************************************
+000005 01  FSNET09.                                                     
+000006     05 N09-CODSOCIE             PIC X(02).                       
+000007     05 N09-DIVISION             PIC X(01).                       
+000008     05 N09-CODFORNI             PIC X(05).                       
+000009     05 N09-SERVIZIO             PIC X(03).                       
+000010     05 N09-CENCOSTO             PIC X(05).                       
+000011     05 N09-CONTODCE             PIC X(06).                       
+000012     05 N09-DESCRXXX             PIC X(30).                       
+000013     05 N09-IMPORTOX             PIC S9(12)V999.                  
+000014     05 N09-CODDIVIS             PIC X(03).                       
+000015     05 N09-NUMBOLLA             PIC X(05).                       
+000016     05 N09-DATBOLLA             PIC X(08).                       
+000017     05 N09-FILLERXX             PIC X(19).                       
+000018     05 N09-NRPREFAT             PIC X(10).                       
+000019     05 N09-DATAELAB             PIC X(08).                       
+      *<<((file: FSNET09))
+000064 01  FILLER                      PIC X(8)  VALUE '*COMODI*'.      
+000065 01  COMODI.                                                      
+000066     05 WS-GIRO-SAP              PIC X(01) VALUE SPACES.          
+000067     05 WS-GIRO-PRP              PIC X(01) VALUE SPACES.          
+000068     05 WS-FSNET03               PIC X(255) VALUE SPACES.         
+000069     05 WS-TIPOCCOS              PIC X(01)  VALUE SPACES.         
+000070     05 WS-TIPOCONT              PIC X(2)  VALUE SPACES.          
+000071     05 SW-TROVATO               PIC X(1)  VALUE SPACES.          
+000072     05 WS-CENCOSTO              PIC X(5)  VALUE SPACES.          
+000073     05 WS-SOCIEGTM              PIC X(2)  VALUE SPACES.          
+000074     05 WS-IMPCOSOK              PIC S9(9)V99.                    
+000075     05 WS-IMPORTOX.                                              
+000076        10 WS-SEGNOXXX           PIC X.                           
+000077        10 WS-IMPCOSTX           PIC 9(11)V999.                   
+000078                                                                  
+000079*------------------------------- DANAGRAF.TDIVISE                 
+000080 01  FILLER                      PIC X(8) VALUE 'FDANA963'.       
+000081*    EXEC SQL INCLUDE FDANA963 END-EXEC.                          
+      *>>((file: FDANA963))
+000001******************************************************************
+000002* COBOL DECLARATION FOR TABLE DANAGRAF.TDIVISE                   *
+000003******************************************************************
+000004 01  DCLTDIVISE.                                                  
+000005*                       SIGLADIV                                  
+000006     10 A963-SIGLADIV        PIC X(3).                            
+000007*                       CAMBIODV                                  
+000008     10 A963-CAMBIODV        PIC S9(5)V9(6) USAGE COMP-3.         
+000009*                       DESCDIVI                                  
+000010     10 A963-DESCDIVI        PIC X(20).                           
+000011*                       CODDIVIS                                  
+000012     10 A963-CODDIVIS        PIC X(2).                            
+000013*                       DECIDIVI                                  
+000014     10 A963-DECIDIVI        PIC X(1).                            
+000015*                       DIVIBANC                                  
+000016     10 A963-DIVIBANC        PIC X(3).                            
+000017*                       DIVIPREZ                                  
+000018     10 A963-DIVIPREZ        PIC X(1).                            
+000019*                       CODDIVRI                                  
+vCOBOL     
+      *EXEC SQL BEGIN DECLARE SECTION END-EXEC.
+000020     10 A963-CODDIVRI        PIC X(2).                            
+vCOBOL     
+      *EXEC SQL END DECLARE SECTION END-EXEC
+                                                 
+000021*                       RAPPCAMB                                  
+000022     10 A963-RAPPCAMB        PIC S9(5)V USAGE COMP-3.             
+000023*                       CODDIGTM                                  
+vCOBOL     
+      *EXEC SQL BEGIN DECLARE SECTION END-EXEC.
+000024     10 A963-CODDIGTM        PIC X(2).                            
+vCOBOL     
+      *EXEC SQL END DECLARE SECTION END-EXEC
+                                                 
+000025*                       FLAGEURO                                  
+000026     10 A963-FLAGEURO        PIC X(1).                            
+000027*                       SLDIVBAN                                  
+vCOBOL     
+      *EXEC SQL BEGIN DECLARE SECTION END-EXEC.
+000028     10 A963-SLDIVBAN        PIC X(3).                            
+vCOBOL     
+      *EXEC SQL END DECLARE SECTION END-EXEC
+                                                 
+000029*                       CDDIVSCA                                  
+000030     10 A963-CDDIVSCA        PIC X(2).                            
+000031*                       FLDIVINT                                  
+000032     10 A963-FLDIVINT        PIC X(1).                            
+000033     10 A963-VBDIVSCA        PIC X(2).                            
+000034******************************************************************
+000035* THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 15      *
+000036******************************************************************
+      *<<((file: FDANA963))
+000082*------------------------------- DANAGRAF.TCENCOSTO               
+000083 01  FILLER                      PIC X(8) VALUE 'FDANA982'.       
+000084*    EXEC SQL INCLUDE FDANA982 END-EXEC.                          
+      *>>((file: FDANA982))
+000001******************************************************************
+000002* DCLGEN TABLE(DANAGRAF.TCENCOSTO)                               *
+000003*        LIBRARY(MTTEST.SOURCE.LIBTEST(FDANA982))                *
+000004*        ACTION(REPLACE)                                         *
+000005*        LANGUAGE(COBOL)                                         *
+000006*        NAMES(A982-)                                            *
+000007*        QUOTE                                                   *
+000008*        COLSUFFIX(YES)                                          *
+000009* ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+000010******************************************************************
+000011     
+      *EXEC SQL DECLARE DANAGRAF.TCENCOSTO TABLE                    
+000012*     ( CODSOCIE                       CHAR(2) NOT NULL,           
+000013*       CENCOSTO                       CHAR(5) NOT NULL,           
+000014*       DESCENCO                       CHAR(30) NOT NULL,          
+000015*       RAGCENCO                       CHAR(3) NOT NULL,           
+000016*       ANNULLAM                       CHAR(1) NOT NULL,           
+000017*       NEWCENCO                       CHAR(5) NOT NULL,           
+000018*       CENCOLIS                       CHAR(5) NOT NULL,           
+000019*       DTCREAZI                       CHAR(8) NOT NULL,           
+000020*       DTULTVAR                       CHAR(8) NOT NULL,           
+000021*       CODUTVAR                       CHAR(6) NOT NULL,           
+000022*       CDMCAGTM                       CHAR(1) NOT NULL,           
+000023*       CDAREGTM                       CHAR(2) NOT NULL,           
+000024*       CDDIPGTM                       CHAR(1) NOT NULL,           
+000025*       CDUBIGTM                       CHAR(2) NOT NULL,           
+000026*       CDLINGTM                       CHAR(2) NOT NULL,           
+000027*       SIGLCALE                       CHAR(3) NOT NULL,           
+000028*       GRUPSIGE                       CHAR(1) NOT NULL,           
+000029*       CDDIVISI                       CHAR(1) NOT NULL            
+000030*     ) END-EXEC
+                                                                        
+000031******************************************************************
+000032* COBOL DECLARATION FOR TABLE DANAGRAF.TCENCOSTO                 *
+000033******************************************************************
+000034 01  DCLTCENCOSTO.                                                
+000035*                       CODSOCIE                                  
+vCOBOL     
+      *EXEC SQL BEGIN DECLARE SECTION END-EXEC.
+000036     10 A982-CODSOCIE        PIC X(2).                            
+vCOBOL     
+      *EXEC SQL END DECLARE SECTION END-EXEC
+                                                 
+000037*                       CENCOSTO                                  
+vCOBOL     
+      *EXEC SQL BEGIN DECLARE SECTION END-EXEC.
+000038     10 A982-CENCOSTO        PIC X(5).                            
+vCOBOL     
+      *EXEC SQL END DECLARE SECTION END-EXEC
+                                                 
+000039*                       DESCENCO                                  
+000040     10 A982-DESCENCO        PIC X(30).                           
+000041*                       RAGCENCO                                  
+000042     10 A982-RAGCENCO        PIC X(3).                            
+000043*                       ANNULLAM                                  
+vCOBOL     
+      *EXEC SQL BEGIN DECLARE SECTION END-EXEC.
+000044     10 A982-ANNULLAM        PIC X(1).                            
+vCOBOL     
+      *EXEC SQL END DECLARE SECTION END-EXEC
+                                                 
+000045*                       NEWCENCO                                  
+000046     10 A982-NEWCENCO        PIC X(5).                            
+000047*                       CENCOLIS                                  
+000048     10 A982-CENCOLIS        PIC X(5).                            
+000049*                       DTCREAZI                                  
+000050     10 A982-DTCREAZI        PIC X(8).                            
+000051*                       DTULTVAR                                  
+000052     10 A982-DTULTVAR        PIC X(8).                            
+000053*                       CODUTVAR                                  
+000054     10 A982-CODUTVAR        PIC X(6).                            
+000055*                       CDMCAGTM                                  
+000056     10 A982-CDMCAGTM        PIC X(1).                            
+000057*                       CDAREGTM                                  
+000058     10 A982-CDAREGTM        PIC X(2).                            
+000059*                       CDDIPGTM                                  
+000060     10 A982-CDDIPGTM        PIC X(1).                            
+000061*                       CDUBIGTM                                  
+000062     10 A982-CDUBIGTM        PIC X(2).                            
+000063*                       CDLINGTM                                  
+000064     10 A982-CDLINGTM        PIC X(2).                            
+000065*                       SIGLCALE                                  
+000066     10 A982-SIGLCALE        PIC X(3).                            
+000067*                       GRUPSIGE                                  
+000068     10 A982-GRUPSIGE        PIC X(1).                            
+000069*                       CDDIVISI                                  
+vCOBOL     
+      *EXEC SQL BEGIN DECLARE SECTION END-EXEC.
+000070     10 A982-CDDIVISI        PIC X(1).                            
+vCOBOL     
+      *EXEC SQL END DECLARE SECTION END-EXEC
+                                                 
+000071******************************************************************
+000072* THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 18      *
+000073******************************************************************
+      *<<((file: FDANA982))
+000085*------------------------------- DANAGRAF.TSOCIETA                
+000086 01  FILLER                      PIC X(8) VALUE 'FDANA531'.       
+000087*    EXEC SQL INCLUDE FDANA531 END-EXEC.                          
+      *>>((file: FDANA531))
+000001******************************************************************
+000002* COBOL DECLARATION FOR TABLE DANAGRAF.TSOCIETA                  *
+000003******************************************************************
+000004 01  DCLTSOCIETA.                                                 
+vCOBOL     
+      *EXEC SQL BEGIN DECLARE SECTION END-EXEC.
+000005     10 A531-CODSOCIE        PIC X(2).                            
+vCOBOL     
+      *EXEC SQL END DECLARE SECTION END-EXEC
+                                                 
+000006     10 A531-NOMSOCIE        PIC X(23).                           
+000007     10 A531-CODFORNI        PIC X(5).                            
+000008     10 A531-TASSINTE        PIC S9(3)V9(2) USAGE COMP-3.         
+000009     10 A531-CODPAESE        PIC X(3).                            
+000010     10 A531-NRGGRISC        PIC S9(3)V USAGE COMP-3.             
+000011     10 A531-CODPIANO        PIC X(2).                            
+000012     10 A531-CITTASOC        PIC X(18).                           
+000013     10 A531-FLPAGIVA        PIC X(1).                            
+000014     10 A531-FLFATACQ        PIC X(1).                            
+000015     10 A531-CODAZIEN        PIC X(5).                            
+000016     10 A531-FLIVATRA        PIC X(1).                            
+000017     10 A531-CODDIVIS        PIC X(2).                            
+000018     10 A531-COSTINTE        PIC S9(3)V9(2) USAGE COMP-3.         
+000019     10 A531-FLCONTAB        PIC X(1).                            
+000020     10 A531-FLAGMAGA        PIC X(1).                            
+000021     10 A531-RAGSOCIE        PIC X(50).                           
+000022     10 A531-SOCIECON        PIC X(2).                            
+000023     10 A531-DTCREAZI        PIC X(8).                            
+000024     10 A531-DTULTVAR        PIC X(8).                            
+000025     10 A531-CODUTVAR        PIC X(6).                            
+000026     10 A531-INDLEGAL        PIC X(35).                           
+000027     10 A531-CAPLEGAL        PIC X(5).                            
+000028     10 A531-CITLEGAL        PIC X(18).                           
+000029     10 A531-CODFISCA        PIC X(16).                           
+000030     10 A531-CODDIVRI        PIC X(2).                            
+vCOBOL     
+      *EXEC SQL BEGIN DECLARE SECTION END-EXEC.
+000031     10 A531-SOCIEGTM        PIC X(2).                            
+vCOBOL     
+      *EXEC SQL END DECLARE SECTION END-EXEC
+                                                 
+000032     10 A531-GENEFATT        PIC X(1).                            
+000033     10 A531-FLAGATTI        PIC X(1).                            
+000034     10 A531-DIVISOLD        PIC X(2).                            
+000035     10 A531-DTFINOLD        PIC X(8).                            
+000036     10 A531-DIVRIOLD        PIC X(2).                            
+000037     10 A531-DIVIRIFA        PIC X(2).                            
+000038     10 A531-FLEURUSA        PIC X(1).                            
+000039     10 A531-FLAGLIMI        PIC X(1).                            
+000040     10 A531-FLFILIAL        PIC X(1).                            
+000041     10 A531-FLPRESEN        PIC X(1).                            
+000042     10 A531-CODSOCPA        PIC X(1).                            
+000043     10 A531-FLBOLGVB        PIC X(1).                            
+000044     10 A531-FLSTCART        PIC X(1).                            
+000045     10 A531-FLDIPEST        PIC X(1).                            
+000046     10 A531-CODFIRMA        PIC X(8).                            
+000047     10 A531-DESFIRMA        PIC X(24).                           
+000048     10 A531-CDSOCJDE        PIC X(5).                            
+000049     10 A531-CODFORNV        PIC X(5).                            
+000050     10 A531-CODFORNA        PIC X(5).                            
+000051     10 A531-IMPCCASO        PIC S9(13) COMP-3.                   
+000052     10 A531-TRIBCCIA        PIC X(10).                           
+000053     10 A531-PROLEGAL        PIC X(2).                            
+000054     10 A531-FLSOCSAP        PIC X(1).                            
+000055     10 A531-DIVIXLAV        PIC X(2).                            
+000056******************************************************************
+000057* THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 51      *
+000058******************************************************************
+      *<<((file: FDANA531))
+000088*------------------------------- DCONTCLI.TCONTIDCE               
+000089 01  FILLER                      PIC X(8) VALUE 'FDCLI861'.       
+000090*    EXEC SQL INCLUDE FDCLI861 END-EXEC.                          
+      *>>((file: FDCLI861))
+000001******************************************************************
+000002* COBOL DECLARATION FOR TABLE DCONTCLI.TCONTIDCE                 *
+000003******************************************************************
+000004 01  DCLTCONTIDCE.                                                
+vCOBOL     
+      *EXEC SQL BEGIN DECLARE SECTION END-EXEC.
+000005     10 C861-CONTODCE        PIC X(6).                            
+vCOBOL     
+      *EXEC SQL END DECLARE SECTION END-EXEC
+                                                 
+000006     10 C861-CODPIANO        PIC X(2).                            
+000007     10 C861-CONTPROV        PIC X(6).                            
+000008     10 C861-DESCRDCE        PIC X(25).                           
+000009     10 C861-ANNULLAM        PIC X(1).                            
+vCOBOL     
+      *EXEC SQL BEGIN DECLARE SECTION END-EXEC.
+000010     10 C861-TIPCONTO        PIC X(2).                            
+000011     10 C861-CONTGRUP        PIC X(6).                            
+vCOBOL     
+      *EXEC SQL END DECLARE SECTION END-EXEC
+                                                 
+000012     10 C861-NOTECON1        PIC X(33).                           
+000013     10 C861-NOTECON2        PIC X(33).                           
+000014     10 C861-INDBILQU        PIC X(1).                            
+000015     10 C861-FLCOMMES        PIC X(1).                            
+000016******************************************************************
+000017* THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 11 C861- 
+000018******************************************************************
+      *<<((file: FDCLI861))
+000091                                                                  
+000092*    EXEC SQL INCLUDE SQLCA END-EXEC.                             
+      *>>((file: SQLCA))
+000001****************************************************************<*
+000002* Copyright (c) 2016-2023 NTT DATA, Inc. All rights reserved.  *<*
+000003* Users of NTT DATA Enterprise COBOL may freely                *<*
+000004* redistribute this copybook.                                  *<*
+000005****************************************************************<*
+000006                                                                  
+000007 01  SQLCA GLOBAL.                                                
+000008     05  SQLCAID                PIC X(8).                         
+000009     05  SQLCABC                PIC S9(9) COMP-5.                 
+000010     05  SQLCODE                PIC S9(9) COMP-5.                 
+000011     05  SQLERRM.                                                 
+000012         49  SQLERRML           PIC S9(4) COMP-5.                 
+000013         49  SQLERRMC           PIC X(254).                       
+000014     05  SQLERRP                PIC X(8).                         
+000015     05  SQLERRD OCCURS 6 TIMES PIC S9(9) COMP-5.                 
+000016     05  SQLWARN.                                                 
+000017         10 SQLWARN0            PIC X(1).                         
+000018         10 SQLWARN1            PIC X(1).                         
+000019         10 SQLWARN2            PIC X(1).                         
+000020         10 SQLWARN3            PIC X(1).                         
+000021         10 SQLWARN4            PIC X(1).                         
+000022         10 SQLWARN5            PIC X(1).                         
+000023         10 SQLWARN6            PIC X(1).                         
+000024         10 SQLWARN7            PIC X(1).                         
+000025     05  SQLSTATE               PIC X(5).                         
+000026     05  SQLEXT                 PIC S9(5) COMP-3 VALUE 1.         
+      *<<((file: SQLCA))
+000093                                                                  
+000094*----------------------------------------------------------------*
+000095 PROCEDURE DIVISION.                                              
+000096*----------------------------------------------------------------*
+000095 VCOBOL-DUMMY-PROCEDURE.
+000097                                                                  
+000098     
+      *EXEC SQL WHENEVER SQLERROR GO TO Z00-ERRORE END-EXEC
+                                                                        
+000099                                                                  
+000100     MOVE 'AVBFT20'              TO PPNAME                        
+000101                                    WCOM-PROGNAME.                
+000102                                                                  
+000103     PERFORM A10-DATA-GIORNO                                      
+000104        THRU A10-EX.                                              
+000105                                                                  
+000106     OPEN INPUT  FILEINP.                                         
+000107     OPEN OUTPUT FILEOUT.                                         
+000108     OPEN OUTPUT NORDWEST.                                        
+000109     OPEN OUTPUT FILECOS.                                         
+000110     OPEN OUTPUT SCARTI                                           
+000111                                                                  
+000112     PERFORM L00-LEGGI-INPUT                                      
+000113        THRU L00-EX.                                              
+000114                                                                  
+000115     PERFORM B00-ELABORA-INPUT                                    
+000116        THRU B00-EX                                               
+000117             UNTIL FSNET03 = HIGH-VALUE.                          
+000118                                                                  
+000119     CLOSE FILEINP                                                
+000120           FILEOUT                                                
+000121           NORDWEST                                               
+000122           FILECOS                                                
+000123           SCARTI.                                                
+000124                                                                  
+000125     MOVE 'P'                    TO PPROUTIN.                     
+000126     PERFORM Z90-READPRIN                                         
+000127        THRU Z90-EX.                                              
+000128                                                                  
+000129     MOVE ZERO                   TO  RETURN-CODE.                 
+000130                                                                  
+000131     CALL "CCF_SET_RETCODE" USING RETURN-CODE                     
+000132     STOP RUN.                                                    
+000133                                                                  
+000134*-------------------------------------------------------*         
+000135 A10-DATA-GIORNO.                                                 
+000136*-------------------------------------------------------*         
+000137                                                                  
+000138     INITIALIZE  DCWDTEL.                                         
+000139     MOVE 'R'                    TO DTEL-TIPORICH.                
+000140     MOVE 'AVBFT20'              TO DTEL-SIGLDATA.                
+000141     MOVE 'G'                    TO DTEL-DATATIPO.                
+000142                                                                  
+000143     MOVE 'SCADTEL'              TO PPCALL.                       
+000144     CALL  PPCALL             USING DCPARM                        
+000145                                    DCWDTEL.                      
+000146     IF DTEL-RETCOD NOT = ZEROES                                  
+000147        MOVE DTEL-RETCOD         TO WCOM-FILECTRL                 
+000148        MOVE 'MODULO'            TO WCOM-FILEFUNZ                 
+000149        MOVE 'SCADTEL'           TO WCOM-FILENOME                 
+000150        MOVE 'A10-'              TO WCOM-CODABEND                 
+000151        PERFORM Z00-ERRORE                                        
+000152           THRU Z00-EX.                                           
+000153                                                                  
+000154 A10-EX. EXIT.                                                    
+000155*----------------------------------------------------------------*
+000156 B00-ELABORA-INPUT.                                               
+000157*----------------------------------------------------------------*
+000158*--- SE FORN.'60167' E TIPO 'IMPORT'                              
+000159*--- VIENE MANDATO AL PGM AVAFT25 CHE LO SUDDIVIDE                
+000160*--- PER DISTINTA DI TRASPORTO E TOGLIE IL TIPO 'IMPORT'          
+000161*--- E POI LO RIMANDA A QUESTO PROGRAMMA CHE NEL GIRO SUCCESSIVO  
+000162*--- LO ELABORERA' PER SAP (207>>206)                             
+000163*--->>>>                                                          
+000164*--- DAL 2025 PER PARTENZA DI OPLA PER SUBLITEX NON SARA' PIU'    
+000165*--- POSSIBILE XC I COSTI SONO SU OPLA E LA PRP LA GESTIAMO IN CIC
+000166*--- QUINDI IL GIRO 60167+IMPORT CI SARA' SOLO PER LA SOC.09T,    
+000167*--- PER LA 24T ENTRA IN SAP DIRETTAMENTE LA PRP                  
+000168                                                                  
+000169     IF WS-GIRO-SAP = 'S'                                         
+000170        IF N03-CODFORNI = '60167'  AND                            
+000171           N03-TIPOMOVI = 'IMPORT' AND                            
+000172           N03-CODSOCIE(1:3) = '09T'                              
+000173           PERFORM W00-WRITE-NORDWEST                             
+000174              THRU W00-EX                                         
+000175        ELSE                                                      
+000176           PERFORM B01-VERIFICA-INPUT                             
+000177              THRU B01-EX                                         
+000178           IF SW-TROVATO = '0'                                    
+000179              PERFORM B05-SCRIVI-XGTM                             
+000180                 THRU B05-EX                                      
+000181           ELSE                                                   
+000182              PERFORM B08-SCRIVI-SCARTI                           
+000183                 THRU B08-EX                                      
+000184           END-IF                                                 
+000185        END-IF                                                    
+000186     ELSE                                                         
+000187        IF WS-GIRO-PRP = 'S'                                      
+000188           PERFORM B06-SCRIVI-PRP                                 
+000189              THRU B06-EX.                                        
+000190                                                                  
+000191     PERFORM L00-LEGGI-INPUT                                      
+000192        THRU L00-EX.                                              
+000193                                                                  
+000194 B00-EX. EXIT.                                                    
+000195*----------------------------------------------------------------*
+000196 B01-VERIFICA-INPUT.                                              
+000197*----------------------------------------------------------------*
+000198                                                                  
+000199     MOVE '0'                    TO SW-TROVATO                    
+000200                                                                  
+000201*--- CONTO DCE                                                    
+000202***  IF N03-CONTODCE      NOT > ' ' OR                            
+000203***     N03-CONTODCE(1:1)     = '.' OR                            
+000204***     N03-CONTODCE(1:1)     = 'G' OR                            
+000205***     N03-CONTODCE(7:1)     > ' '                               
+000206***     MOVE '620101'            TO N03-CONTODCE.                 
+000207                                                                  
+000208*--- CONTO DCE                                                    
+000209     IF N03-CONTODCE      NOT > ' ' OR                            
+000210        N03-CONTODCE(1:1)     = '.' OR                            
+000211        N03-CONTODCE(7:1)     > ' '                               
+000212        MOVE '620101'            TO N03-CONTODCE.                 
+000213                                                                  
+000214    IF N03-CONTODCE(1:1) = 'G'                                    
+000215       EVALUATE N03-CONTODCE                                      
+000216           WHEN 'G80008'                                          
+000217                MOVE '620101'   TO N03-CONTODCE                   
+000218           WHEN 'G80009'                                          
+000219                MOVE '620200'   TO N03-CONTODCE                   
+000220           WHEN 'G80010'                                          
+000221                MOVE '620102'   TO N03-CONTODCE                   
+000222           WHEN 'G80011'                                          
+000223                MOVE '620103'   TO N03-CONTODCE                   
+000224       END-EVALUATE.                                              
+000225                                                                  
+000226                                                                  
+000227     MOVE N03-CONTODCE           TO C861-CONTODCE                 
+000228     MOVE N03-CODSOCIE(1:2)      TO A531-CODSOCIE                 
+000229     PERFORM L40-SELECT-CONTIDCE                                  
+000230        THRU L40-EX                                               
+000231     IF SQLCODE = 100                                             
+000232        MOVE '4'                 TO SW-TROVATO                    
+000233        GO TO B01-EX.                                             
+000234                                                                  
+000235     MOVE N03-CENCOSTO           TO WS-CENCOSTO                   
+000236                                                                  
+000237*--- C/COSTO                                                      
+000238     MOVE N03-CENCOSTO           TO A982-CENCOSTO                 
+000239     MOVE N03-CODSOCIE(1:2)      TO A982-CODSOCIE                 
+000240     MOVE N03-CODSOCIE(3:1)      TO A982-CDDIVISI                 
+000241     PERFORM L20-SELECT-TCENCOSTO                                 
+000242        THRU L20-EX                                               
+000243     IF SQLCODE           = 100 AND                               
+000244        N03-CODSOCIE(1:3) = '09T'                                 
+000245        MOVE 'A'                 TO A982-CDDIVISI                 
+000246        PERFORM L20-SELECT-TCENCOSTO                              
+000247           THRU L20-EX.                                           
+000248                                                                  
+000249     IF SQLCODE = 100                                             
+000250        MOVE '1'                 TO SW-TROVATO                    
+000251        GO TO B01-EX.                                             
+000252                                                                  
+000253     MOVE WS-TIPOCONT            TO WS-TIPOCCOS.                  
+000254     IF WS-CENCOSTO(1:1) =  'K' OR                                
+000255       (WS-CENCOSTO(1:1) >  '0' AND                               
+000256        WS-CENCOSTO(1:1) <  '9')                                  
+000257        MOVE 'V'                 TO WS-TIPOCCOS.                  
+000258     IF WS-CENCOSTO(1:1)  = 'C'                                   
+000259        MOVE 'A'                 TO WS-TIPOCCOS.                  
+000260                                                                  
+000261*--- SE C/COSTO    VENDITA E CONTO DCE NO VENDITA SEGNALO E SCARTO
+000262*--- SE C/COSTO NO VENDITA E CONTO DCE    VENDITA SEGNALO E SCARTO
+000263     IF WS-TIPOCONT(1:1) NOT = WS-TIPOCCOS AND                    
+000264        N03-STATIST6     NOT > ' '                                
+000265        MOVE '5'                 TO SW-TROVATO                    
+000266        GO TO B01-EX.                                             
+000267                                                                  
+000268*--- DIVISA                                                       
+000269     MOVE N03-CODDIVIS           TO A963-SLDIVBAN.                
+000270     MOVE '75'                   TO A963-CODDIVRI.                
+000271     PERFORM L30-SELECT-TDIVISE                                   
+000272        THRU L30-EX.                                              
+000273     IF A963-CODDIGTM NOT > ' '                                   
+000274        MOVE '6'                 TO SW-TROVATO                    
+000275        GO TO B01-EX.                                             
+000276                                                                  
+000277 B01-EX. EXIT.                                                    
+000278*----------------------------------------------------------------*
+000279 B05-SCRIVI-XGTM.                                                 
+000280*----------------------------------------------------------------*
+000281                                                                  
+000282     PERFORM B07-PREPARA-FSNET09                                  
+000283        THRU B07-EX.                                              
+000284                                                                  
+000285     IF N09-IMPORTOX = 0                                          
+000286        GO TO B05-EX.                                             
+000287                                                                  
+000288     PERFORM W10-WRITE-FILEOUT                                    
+000289        THRU W10-EX.                                              
+000290                                                                  
+000291                                                                  
+000292*---------------------------------------------------------------  
+000293*--- 15/02/2024: TEST SOSTITUITO PERCHE' NON VENIVA AGGIORNATO    
+000294*---             CORRETTAMENTE IL CAMPO STPREFAT='A'              
+000295*---                                                              
+000296*--- SCRIVO UN FILE UGUALE ALL'INPUT CHE VERRA' LETTO DALLA       
+000297*--- PROC.ACGRD207 - PGM.AVAFT25 CHE LO UTILIZZA PER AGGIORNARE   
+000298*--- DATATRAS (DATA TRASMISSIONE PREFATTURA A GTM) SU TNETMOVEREXP
+000299*--- IL FILE NON VA SCRITTO PER TUTTI I RECORD CHE HANNO A CHE    
+000300*--- FARE CON LA FASHION O CON I CLIENTI ESTERNI DI M2LOG PERCHE' 
+000301*--- DI QUESTE PREFATTURE TESI NON CI MANDA IL FILE DEI COSTI     
+000302*---                                                              
+000303*--- IF N03-ANAGRECE(3:1) = 'V' OR                                
+000304*---    N03-CODSOCIE(3:1) = 'V' OR                                
+000305*---    N03-ANAGPROP(3:1) = 'V' OR                                
+000306*---   (N03-ANAGPROP(4:1) > ' ' AND                               
+000307*---    N03-ANAGPROP(5:1) > ' ' AND                               
+000308*---    N03-CODSOCIE(1:3) = '22A')                                
+000309*---    GO TO B05-EX.                                             
+000310*---                                                              
+000311*---------------------------------------------------------------  
+000312                                                                  
+000313                                                                  
+000314     IF WS-GIRO-PRP = 'S'                                         
+000315        PERFORM W20-WRITE-FILECOS                                 
+000316           THRU W20-EX.                                           
+000317                                                                  
+000318 B05-EX. EXIT.                                                    
+000319*----------------------------------------------------------------*
+000320 B06-SCRIVI-PRP.                                                  
+000321*----------------------------------------------------------------*
+000322                                                                  
+000323     MOVE N03-CODSOCIE(3:1)      TO A982-CDDIVISI.                
+000324                                                                  
+000325     MOVE N03-CODSOCIE(1:2)      TO A531-CODSOCIE.                
+000326     PERFORM L50-SELECT-SOCIETA                                   
+000327        THRU L50-EX.                                              
+000328                                                                  
+000329     MOVE N03-CODDIVIS           TO A963-SLDIVBAN.                
+000330     MOVE '75'                   TO A963-CODDIVRI.                
+000331     PERFORM L30-SELECT-TDIVISE                                   
+000332        THRU L30-EX.                                              
+000333                                                                  
+000334     PERFORM B07-PREPARA-FSNET09                                  
+000335        THRU B07-EX.                                              
+000336                                                                  
+000337     IF N09-IMPORTOX = 0                                          
+000338        GO TO B06-EX.                                             
+000339                                                                  
+000340     PERFORM W20-WRITE-FILECOS                                    
+000341        THRU W20-EX.                                              
+000342                                                                  
+000343 B06-EX. EXIT.                                                    
+000344*----------------------------------------------------------------*
+000345 B07-PREPARA-FSNET09.                                             
+000346*----------------------------------------------------------------*
+000347                                                                  
+000348     MOVE SPACES                 TO FSNET09                       
+000349     INITIALIZE                     FSNET09                       
+000350                                                                  
+000351     MOVE A982-CDDIVISI          TO N09-DIVISION.                 
+000352     MOVE N03-CODFORNI           TO N09-CODFORNI.                 
+000353     MOVE 'SS'                   TO N09-SERVIZIO.                 
+000354                                                                  
+000355     MOVE N03-CONTODCE           TO N09-CONTODCE.                 
+000356                                                                  
+000357     MOVE N03-CENCOSTO           TO N09-CENCOSTO.                 
+000358                                                                  
+000359     MOVE 'VIAGGI NETMOVER'      TO N09-DESCRXXX.                 
+000360                                                                  
+000361     MOVE N03-IMPORTOX           TO WS-IMPORTOX                   
+000362     IF WS-SEGNOXXX EQUAL '-'                                     
+000363        COMPUTE WS-IMPCOSOK = WS-IMPCOSTX * -1                    
+000364     ELSE                                                         
+000365        COMPUTE WS-IMPCOSOK = WS-IMPCOSTX * +1                    
+000366     END-IF                                                       
+000367     MOVE  WS-IMPCOSOK           TO N09-IMPORTOX.                 
+000368                                                                  
+000369     MOVE A963-CODDIGTM          TO N09-CODDIVIS.                 
+000370                                                                  
+000371     MOVE N03-NRPRFATT(6:5)      TO N09-NUMBOLLA.                 
+000372     MOVE N03-DTPRFATT           TO N09-DATBOLLA.                 
+000373                                                                  
+000374     MOVE N03-NRPRFATT           TO N09-NRPREFAT.                 
+000375     MOVE DTEL-DTINELAB          TO N09-DATAELAB                  
+000376                                                                  
+000377     MOVE A531-SOCIEGTM          TO N09-CODSOCIE.                 
+000378                                                                  
+000379 B07-EX. EXIT.                                                    
+000380*----------------------------------------------------------------*
+000381 B08-SCRIVI-SCARTI.                                               
+000382*----------------------------------------------------------------*
+000383                                                                  
+000384     MOVE 'M'                    TO PPROUTIN.                     
+000385     MOVE SPACES                 TO PPMESSAG                      
+000386                                                                  
+000387     IF SW-TROVATO = '1'                                          
+000388        STRING 'RENATO: C/COSTO ERRATO SU FILE NETMOVER X GTM: '  
+000389               A982-CODSOCIE ' ' A982-CENCOSTO                    
+000390        DELIMITED BY SIZE      INTO PPMESSAG.                     
+000391                                                                  
+000392     IF SW-TROVATO = '2'                                          
+000393        STRING 'RENATO: PAESE DESTINAZIONE ERRATO/MANCANTE: '     
+000394               'FATT.' N03-NRPRFATT(6:5) ' C.COS.' N03-CENCOSTO   
+000395        DELIMITED BY SIZE      INTO PPMESSAG.                     
+000396                                                                  
+000397     IF SW-TROVATO = '3'                                          
+000398        STRING 'RENATO: MANCA RAGGR.TRASPORTI SU PAESE: '         
+000399               N03-NAZIOSCA                                       
+000400        DELIMITED BY SIZE      INTO PPMESSAG.                     
+000401                                                                  
+000402     IF SW-TROVATO = '4'                                          
+000403        STRING 'RENATO: CONTO DCE ERRATO: SOC.' A531-CODSOCIE     
+000404               ' CONTO:' C861-CONTODCE                            
+000405        DELIMITED BY SIZE      INTO PPMESSAG.                     
+000406                                                                  
+000407     IF SW-TROVATO = '5'                                          
+000408        STRING 'RENATO: C/COSTO ' N03-CENCOSTO ' NON CONGRUENTE ' 
+000409               'CON DCE ' N03-CONTODCE                            
+000410        DELIMITED BY SIZE      INTO PPMESSAG.                     
+000411                                                                  
+000412     IF SW-TROVATO = '6'                                          
+000413        STRING 'RENATO: DIVISA ' N03-CODDIVIS ' ERRATA/MANCANTE  '
+000414               'FATT.' N03-NRPRFATT(6:5) ' C.COS.' N03-CENCOSTO   
+000415        DELIMITED BY SIZE      INTO PPMESSAG.                     
+000416                                                                  
+000417     PERFORM Z90-READPRIN                                         
+000418        THRU Z90-EX.                                              
+000419                                                                  
+000420     WRITE REC-SCARTI          FROM WS-FSNET03                    
+000421                                                                  
+000422     MOVE 'U'                    TO PPROUTIN.                     
+000423     MOVE 'SCARTI'               TO PPNMFILE.                     
+000424     MOVE 'U'                    TO PPTPOPER.                     
+000425     MOVE 'S'                    TO PPTPFILE.                     
+000426     PERFORM Z90-READPRIN                                         
+000427        THRU Z90-EX.                                              
+000428                                                                  
+000429 B08-EX. EXIT.                                                    
+000430*----------------------------------------------------------------*
+000431 L00-LEGGI-INPUT.                                                 
+000432*----------------------------------------------------------------*
+000433                                                                  
+000434     MOVE SPACES                 TO WS-GIRO-SAP.                  
+000435     MOVE SPACES                 TO WS-GIRO-PRP.                  
+000436                                                                  
+000437     MOVE SPACES                 TO FSNET03.                      
+000438     INITIALIZE FSNET03.                                          
+000439                                                                  
+000440     READ FILEINP INTO FSNET03 AT END                             
+000441          MOVE HIGH-VALUE        TO FSNET03.                      
+000442                                                                  
+000443     IF FSNET03 = HIGH-VALUE                                      
+000444        GO TO L00-EX.                                             
+000445                                                                  
+000446     MOVE 'U'                    TO PPROUTIN                      
+000447     MOVE 'S'                    TO PPTPFILE                      
+000448     MOVE 'R'                    TO PPTPOPER                      
+000449     MOVE 'FILINP'               TO PPNMFILE                      
+000450     PERFORM Z90-READPRIN                                         
+000451        THRU Z90-EX.                                              
+000452                                                                  
+000453     MOVE FSNET03                TO WS-FSNET03.                   
+000454                                                                  
+000455*--- SE SI TRATTA DI UN CLIENTE O MANCA LA CODSOCIE,              
+000456*--- SOSTITUISCO CON LA SOCIETA' ANAGRECE                         
+000457                                                                  
+000458     IF N03-CODSOCIE(4:1) > SPACES OR                             
+000459        N03-CODSOCIE  NOT > SPACES                                
+000460        MOVE N03-ANAGRECE        TO N03-CODSOCIE.                 
+000461                                                                  
+000462                                                                  
+000463*--- PER SAP PRENDO SOLO LE RIGHE CHE:                            
+000464*--- - SONO TRASPORTI PER 09T/24T                                 
+000465*--- OPPURE                                                       
+000466*--- - HANNO SOCIETA 22A (FINCHE' ARRIVERA')                      
+000467*---   PERCHE' NON VIENE TRATTATA DALLA FASHION                   
+000468                                                                  
+000469     IF N03-CODSOCIE(3:1) = 'T'  OR                               
+000470        N03-CODSOCIE(1:3) = '22A'                                 
+000471        MOVE 'S'                 TO WS-GIRO-SAP.                  
+000472                                                                  
+000473                                                                  
+000474*--- PER L'AGGIORNAMENTO DELLA TNETMOVEREXPO                      
+000475*--- PRENDO SOLO LE RIGHE CHE HANNO A CHE FARE                    
+000476*--- CON LA DIVISIONE 'T'                                         
+000477*--- (STESSI TEST DEL PGM AVAFT25 CHE CARICA I COSTI).            
+000478*--- VIENE SCRITTO UN FILE CHE SARA' LETTO DALLA                  
+000479*--- ACGRD207 - AVAFT25 CHE LO UTILIZZA PER AGGIORNARE            
+000480*--- DATATRAS (DATA TRASMISSIONE PREFATTURA A GTM)                
+000481*--- E STPREFAT = 'A' SU TNETMOVEREXPO.                           
+000482                                                                  
+000483     IF N03-ANAGRECE(3:1) = 'T' OR                                
+000484        N03-CODSOCIE(3:1) = 'T' OR                                
+000485        N03-ANAGPROP(3:1) = 'T'                                   
+000486        MOVE 'S'                 TO WS-GIRO-PRP.                  
+000487                                                                  
+000488                                                                  
+000489     IF WS-GIRO-SAP = 'S' OR                                      
+000490        WS-GIRO-PRP = 'S'                                         
+000491        CONTINUE                                                  
+000492     ELSE                                                         
+000493        GO TO L00-LEGGI-INPUT.                                    
+000494                                                                  
+000495 L00-EX. EXIT.                                                    
+000496*----------------------------------------------------------------*
+000497 L20-SELECT-TCENCOSTO.                                            
+000498*----------------------------------------------------------------*
+000499                                                                  
+000500     MOVE 'L20-'                 TO WCOM-CODABEND.                
+000501     MOVE 'SELECT'               TO WCOM-FILEFUNZ.                
+000502     MOVE 'TCENCOSTO'            TO WCOM-FILENOME.                
+000503     MOVE SPACES                 TO WCOM-FILECTRL.                
+000504     STRING A982-CODSOCIE ' ' A982-CENCOSTO ' T'                  
+000505        DELIMITED BY SIZE      INTO WCOM-FILECTRL.                
+000506                                                                  
+000508     
+      *EXEC SQL 
+      *SELECT ANNULLAM                                         
+000509*            INTO :A982-ANNULLAM                                   
+000510*            FROM DANAGRAF.TCENCOSTO                               
+000511*           WHERE CENCOSTO = :A982-CENCOSTO                        
+000512*             AND CODSOCIE = :A982-CODSOCIE                        
+000513*             AND CDDIVISI = :A982-CDDIVISI                        
+000514*             AND ANNULLAM = ' '                                   
+000515*     END-EXEC
+           CALL "sqlgstrt" USING
+              BY CONTENT SQLA-PROGRAM-ID
+              BY VALUE 0
+              BY REFERENCE SQLCA
+
+           MOVE 1 TO SQL-STMT-ID 
+           MOVE 3 TO SQLDSIZE 
+           MOVE 2 TO SQLDA-ID 
+
+           CALL "sqlgaloc" USING
+               BY VALUE SQLDA-ID 
+                        SQLDSIZE
+                        SQL-STMT-ID
+                        0
+
+           MOVE 5 TO SQL-HOST-VAR-LENGTH
+           MOVE 452 TO SQL-DATA-TYPE
+           MOVE 0 TO SQLVAR-INDEX
+           MOVE 2 TO SQLDA-ID
+
+           CALL "sqlgstlv" USING 
+            BY VALUE SQLDA-ID
+                     SQLVAR-INDEX
+                     SQL-DATA-TYPE
+                     SQL-HOST-VAR-LENGTH
+            BY REFERENCE A982-CENCOSTO
+            BY VALUE 0
+                     0
+
+           MOVE 2 TO SQL-HOST-VAR-LENGTH
+           MOVE 452 TO SQL-DATA-TYPE
+           MOVE 1 TO SQLVAR-INDEX
+           MOVE 2 TO SQLDA-ID
+
+           CALL "sqlgstlv" USING 
+            BY VALUE SQLDA-ID
+                     SQLVAR-INDEX
+                     SQL-DATA-TYPE
+                     SQL-HOST-VAR-LENGTH
+            BY REFERENCE A982-CODSOCIE
+            BY VALUE 0
+                     0
+
+           MOVE 1 TO SQL-HOST-VAR-LENGTH
+           MOVE 452 TO SQL-DATA-TYPE
+           MOVE 2 TO SQLVAR-INDEX
+           MOVE 2 TO SQLDA-ID
+
+           CALL "sqlgstlv" USING 
+            BY VALUE SQLDA-ID
+                     SQLVAR-INDEX
+                     SQL-DATA-TYPE
+                     SQL-HOST-VAR-LENGTH
+            BY REFERENCE A982-CDDIVISI
+            BY VALUE 0
+                     0
+
+           MOVE 2 TO SQL-STMT-ID 
+           MOVE 1 TO SQLDSIZE 
+           MOVE 3 TO SQLDA-ID 
+
+           CALL "sqlgaloc" USING
+               BY VALUE SQLDA-ID 
+                        SQLDSIZE
+                        SQL-STMT-ID
+                        0
+
+           MOVE 1 TO SQL-HOST-VAR-LENGTH
+           MOVE 452 TO SQL-DATA-TYPE
+           MOVE 0 TO SQLVAR-INDEX
+           MOVE 3 TO SQLDA-ID
+
+           CALL "sqlgstlv" USING 
+            BY VALUE SQLDA-ID
+                     SQLVAR-INDEX
+                     SQL-DATA-TYPE
+                     SQL-HOST-VAR-LENGTH
+            BY REFERENCE A982-ANNULLAM
+            BY VALUE 0
+                     0
+
+           MOVE 3 TO SQL-OUTPUT-SQLDA-ID 
+           MOVE 2 TO SQL-INPUT-SQLDA-ID 
+           MOVE 1 TO SQL-SECTIONUMBER 
+           MOVE 24 TO SQL-CALL-TYPE 
+
+           CALL "sqlgcall" USING
+            BY VALUE SQL-CALL-TYPE 
+                     SQL-SECTIONUMBER
+                     SQL-INPUT-SQLDA-ID
+                     SQL-OUTPUT-SQLDA-ID
+                     0
+             IF SQLCODE IN SQLCA < 0 THEN
+               CALL "sqlgstop" USING
+                 BY VALUE 0
+               GO TO Z00-ERRORE
+             END-IF 
+
+           CALL "sqlgstop" USING
+            BY VALUE 0
+                   .                                                    
+000516     IF SQLCODE = ZEROES                                          
+000517        MOVE 'U'                 TO PPROUTIN                      
+000518        MOVE 'D'                 TO PPTPFILE                      
+000519        MOVE 'R'                 TO PPTPOPER                      
+000520        MOVE 'CENCOSTO'          TO PPNMFILE                      
+000521        PERFORM Z90-READPRIN                                      
+000522           THRU Z90-EX.                                           
+000523                                                                  
+000524 L20-EX. EXIT.                                                    
+000525*----------------------------------------------------------------*
+000526 L30-SELECT-TDIVISE.                                              
+000527*----------------------------------------------------------------*
+000528                                                                  
+000529     MOVE 'L30-'                 TO WCOM-CODABEND.                
+000530     MOVE 'SELECT'               TO WCOM-FILEFUNZ.                
+000531     MOVE 'TDIVISE'              TO WCOM-FILENOME.                
+000532     MOVE SPACES                 TO WCOM-FILECTRL.                
+000533     STRING A963-SLDIVBAN ' ' A963-CODDIVRI                       
+000534             DELIMITED BY SIZE INTO WCOM-FILECTRL.                
+000535                                                                  
+000536     MOVE SPACES                 TO A963-CODDIGTM.                
+000537                                                                  
+000539     
+      *EXEC SQL 
+      *SELECT CODDIGTM                                         
+000540*            INTO :A963-CODDIGTM                                   
+000541*            FROM DANAGRAF.TDIVISE                                 
+000542*           WHERE SLDIVBAN = :A963-SLDIVBAN                        
+000543*             AND CODDIVRI = :A963-CODDIVRI                        
+000544*           FETCH FIRST 1 ROWS ONLY                                
+000545*     END-EXEC
+           CALL "sqlgstrt" USING
+              BY CONTENT SQLA-PROGRAM-ID
+              BY VALUE 0
+              BY REFERENCE SQLCA
+
+           MOVE 3 TO SQL-STMT-ID 
+           MOVE 2 TO SQLDSIZE 
+           MOVE 2 TO SQLDA-ID 
+
+           CALL "sqlgaloc" USING
+               BY VALUE SQLDA-ID 
+                        SQLDSIZE
+                        SQL-STMT-ID
+                        0
+
+           MOVE 3 TO SQL-HOST-VAR-LENGTH
+           MOVE 452 TO SQL-DATA-TYPE
+           MOVE 0 TO SQLVAR-INDEX
+           MOVE 2 TO SQLDA-ID
+
+           CALL "sqlgstlv" USING 
+            BY VALUE SQLDA-ID
+                     SQLVAR-INDEX
+                     SQL-DATA-TYPE
+                     SQL-HOST-VAR-LENGTH
+            BY REFERENCE A963-SLDIVBAN
+            BY VALUE 0
+                     0
+
+           MOVE 2 TO SQL-HOST-VAR-LENGTH
+           MOVE 452 TO SQL-DATA-TYPE
+           MOVE 1 TO SQLVAR-INDEX
+           MOVE 2 TO SQLDA-ID
+
+           CALL "sqlgstlv" USING 
+            BY VALUE SQLDA-ID
+                     SQLVAR-INDEX
+                     SQL-DATA-TYPE
+                     SQL-HOST-VAR-LENGTH
+            BY REFERENCE A963-CODDIVRI
+            BY VALUE 0
+                     0
+
+           MOVE 4 TO SQL-STMT-ID 
+           MOVE 1 TO SQLDSIZE 
+           MOVE 3 TO SQLDA-ID 
+
+           CALL "sqlgaloc" USING
+               BY VALUE SQLDA-ID 
+                        SQLDSIZE
+                        SQL-STMT-ID
+                        0
+
+           MOVE 2 TO SQL-HOST-VAR-LENGTH
+           MOVE 452 TO SQL-DATA-TYPE
+           MOVE 0 TO SQLVAR-INDEX
+           MOVE 3 TO SQLDA-ID
+
+           CALL "sqlgstlv" USING 
+            BY VALUE SQLDA-ID
+                     SQLVAR-INDEX
+                     SQL-DATA-TYPE
+                     SQL-HOST-VAR-LENGTH
+            BY REFERENCE A963-CODDIGTM
+            BY VALUE 0
+                     0
+
+           MOVE 3 TO SQL-OUTPUT-SQLDA-ID 
+           MOVE 2 TO SQL-INPUT-SQLDA-ID 
+           MOVE 2 TO SQL-SECTIONUMBER 
+           MOVE 24 TO SQL-CALL-TYPE 
+
+           CALL "sqlgcall" USING
+            BY VALUE SQL-CALL-TYPE 
+                     SQL-SECTIONUMBER
+                     SQL-INPUT-SQLDA-ID
+                     SQL-OUTPUT-SQLDA-ID
+                     0
+             IF SQLCODE IN SQLCA < 0 THEN
+               CALL "sqlgstop" USING
+                 BY VALUE 0
+               GO TO Z00-ERRORE
+             END-IF 
+
+           CALL "sqlgstop" USING
+            BY VALUE 0
+                   .                                                    
+000546                                                                  
+000547     IF SQLCODE = ZEROES                                          
+000548        MOVE 'U'                 TO PPROUTIN                      
+000549        MOVE 'D'                 TO PPTPFILE                      
+000550        MOVE 'R'                 TO PPTPOPER                      
+000551        MOVE 'TDIVISE'           TO PPNMFILE                      
+000552        PERFORM Z90-READPRIN                                      
+000553           THRU Z90-EX.                                           
+000554                                                                  
+000555 L30-EX. EXIT.                                                    
+000556*----------------------------------------------------------------*
+000557 L40-SELECT-CONTIDCE.                                             
+000558*----------------------------------------------------------------*
+000559                                                                  
+000560     MOVE 'L40-'                 TO WCOM-CODABEND.                
+000561     MOVE 'SELECT'               TO WCOM-FILEFUNZ.                
+000562     MOVE 'CONTIDCE'             TO WCOM-FILENOME.                
+000563     MOVE SPACES                 TO WCOM-FILECTRL                 
+000564     STRING A531-CODSOCIE ' ' C861-CONTODCE                       
+000565     DELIMITED BY SIZE         INTO WCOM-FILECTRL.                
+000566                                                                  
+000568     
+      *EXEC SQL 
+      *SELECT C.CONTGRUP, S.SOCIEGTM, C.TIPCONTO               
+000569*            INTO :C861-CONTGRUP, :A531-SOCIEGTM, :C861-TIPCONTO   
+000570*            FROM DCONTCLI.TCONTIDCE C                             
+000571*                ,DANAGRAF.TSOCIETA  S                             
+000572*           WHERE C.CONTODCE = :C861-CONTODCE                      
+000573*             AND S.CODSOCIE = :A531-CODSOCIE                      
+000574*             AND C.CODPIANO = S.CODPIANO                          
+000575*     END-EXEC
+           CALL "sqlgstrt" USING
+              BY CONTENT SQLA-PROGRAM-ID
+              BY VALUE 0
+              BY REFERENCE SQLCA
+
+           MOVE 5 TO SQL-STMT-ID 
+           MOVE 2 TO SQLDSIZE 
+           MOVE 2 TO SQLDA-ID 
+
+           CALL "sqlgaloc" USING
+               BY VALUE SQLDA-ID 
+                        SQLDSIZE
+                        SQL-STMT-ID
+                        0
+
+           MOVE 6 TO SQL-HOST-VAR-LENGTH
+           MOVE 452 TO SQL-DATA-TYPE
+           MOVE 0 TO SQLVAR-INDEX
+           MOVE 2 TO SQLDA-ID
+
+           CALL "sqlgstlv" USING 
+            BY VALUE SQLDA-ID
+                     SQLVAR-INDEX
+                     SQL-DATA-TYPE
+                     SQL-HOST-VAR-LENGTH
+            BY REFERENCE C861-CONTODCE
+            BY VALUE 0
+                     0
+
+           MOVE 2 TO SQL-HOST-VAR-LENGTH
+           MOVE 452 TO SQL-DATA-TYPE
+           MOVE 1 TO SQLVAR-INDEX
+           MOVE 2 TO SQLDA-ID
+
+           CALL "sqlgstlv" USING 
+            BY VALUE SQLDA-ID
+                     SQLVAR-INDEX
+                     SQL-DATA-TYPE
+                     SQL-HOST-VAR-LENGTH
+            BY REFERENCE A531-CODSOCIE
+            BY VALUE 0
+                     0
+
+           MOVE 6 TO SQL-STMT-ID 
+           MOVE 3 TO SQLDSIZE 
+           MOVE 3 TO SQLDA-ID 
+
+           CALL "sqlgaloc" USING
+               BY VALUE SQLDA-ID 
+                        SQLDSIZE
+                        SQL-STMT-ID
+                        0
+
+           MOVE 6 TO SQL-HOST-VAR-LENGTH
+           MOVE 452 TO SQL-DATA-TYPE
+           MOVE 0 TO SQLVAR-INDEX
+           MOVE 3 TO SQLDA-ID
+
+           CALL "sqlgstlv" USING 
+            BY VALUE SQLDA-ID
+                     SQLVAR-INDEX
+                     SQL-DATA-TYPE
+                     SQL-HOST-VAR-LENGTH
+            BY REFERENCE C861-CONTGRUP
+            BY VALUE 0
+                     0
+
+           MOVE 2 TO SQL-HOST-VAR-LENGTH
+           MOVE 452 TO SQL-DATA-TYPE
+           MOVE 1 TO SQLVAR-INDEX
+           MOVE 3 TO SQLDA-ID
+
+           CALL "sqlgstlv" USING 
+            BY VALUE SQLDA-ID
+                     SQLVAR-INDEX
+                     SQL-DATA-TYPE
+                     SQL-HOST-VAR-LENGTH
+            BY REFERENCE A531-SOCIEGTM
+            BY VALUE 0
+                     0
+
+           MOVE 2 TO SQL-HOST-VAR-LENGTH
+           MOVE 452 TO SQL-DATA-TYPE
+           MOVE 2 TO SQLVAR-INDEX
+           MOVE 3 TO SQLDA-ID
+
+           CALL "sqlgstlv" USING 
+            BY VALUE SQLDA-ID
+                     SQLVAR-INDEX
+                     SQL-DATA-TYPE
+                     SQL-HOST-VAR-LENGTH
+            BY REFERENCE C861-TIPCONTO
+            BY VALUE 0
+                     0
+
+           MOVE 3 TO SQL-OUTPUT-SQLDA-ID 
+           MOVE 2 TO SQL-INPUT-SQLDA-ID 
+           MOVE 3 TO SQL-SECTIONUMBER 
+           MOVE 24 TO SQL-CALL-TYPE 
+
+           CALL "sqlgcall" USING
+            BY VALUE SQL-CALL-TYPE 
+                     SQL-SECTIONUMBER
+                     SQL-INPUT-SQLDA-ID
+                     SQL-OUTPUT-SQLDA-ID
+                     0
+             IF SQLCODE IN SQLCA < 0 THEN
+               CALL "sqlgstop" USING
+                 BY VALUE 0
+               GO TO Z00-ERRORE
+             END-IF 
+
+           CALL "sqlgstop" USING
+            BY VALUE 0
+                                                                        
+000576                                                                  
+000577     IF SQLCODE = ZEROES                                          
+000578        MOVE SPACES              TO WS-TIPOCONT                   
+000579        EVALUATE C861-CONTGRUP                                    
+000580            WHEN '625000'                                         
+000581                 MOVE 'V'        TO WS-TIPOCONT                   
+000582            WHEN '625001'                                         
+000583                 MOVE 'VV'       TO WS-TIPOCONT                   
+000584            WHEN '608000'                                         
+000585                 MOVE 'A'        TO WS-TIPOCONT                   
+000586            WHEN '608001'                                         
+000587                 MOVE 'A'        TO WS-TIPOCONT                   
+000588            WHEN '608002'                                         
+000589                 MOVE 'AV'       TO WS-TIPOCONT                   
+000590        END-EVALUATE                                              
+000591        MOVE 'U'                 TO PPROUTIN                      
+000592        MOVE 'D'                 TO PPTPFILE                      
+000593        MOVE 'R'                 TO PPTPOPER                      
+000594        MOVE 'CONTIDCE'          TO PPNMFILE                      
+000595        PERFORM Z90-READPRIN                                      
+000596           THRU Z90-EX.                                           
+000597                                                                  
+000598 L40-EX. EXIT.                                                    
+000599*----------------------------------------------------------------*
+000600 L50-SELECT-SOCIETA.                                              
+000601*----------------------------------------------------------------*
+000602                                                                  
+000603     MOVE 'L50-'                 TO WCOM-CODABEND.                
+000604     MOVE 'SELECT'               TO WCOM-FILEFUNZ.                
+000605     MOVE 'SOCIETA'              TO WCOM-FILENOME.                
+000606     MOVE A531-CODSOCIE          TO WCOM-FILECTRL.                
+000607                                                                  
+000608     MOVE SPACES                 TO A531-SOCIEGTM.                
+000609                                                                  
+000611     
+      *EXEC SQL 
+      *SELECT SOCIEGTM                                         
+000612*            INTO :A531-SOCIEGTM                                   
+000613*            FROM DANAGRAF.TSOCIETA                                
+000614*           WHERE CODSOCIE = :A531-CODSOCIE                        
+000615*     END-EXEC
+           CALL "sqlgstrt" USING
+              BY CONTENT SQLA-PROGRAM-ID
+              BY VALUE 0
+              BY REFERENCE SQLCA
+
+           MOVE 7 TO SQL-STMT-ID 
+           MOVE 1 TO SQLDSIZE 
+           MOVE 2 TO SQLDA-ID 
+
+           CALL "sqlgaloc" USING
+               BY VALUE SQLDA-ID 
+                        SQLDSIZE
+                        SQL-STMT-ID
+                        0
+
+           MOVE 2 TO SQL-HOST-VAR-LENGTH
+           MOVE 452 TO SQL-DATA-TYPE
+           MOVE 0 TO SQLVAR-INDEX
+           MOVE 2 TO SQLDA-ID
+
+           CALL "sqlgstlv" USING 
+            BY VALUE SQLDA-ID
+                     SQLVAR-INDEX
+                     SQL-DATA-TYPE
+                     SQL-HOST-VAR-LENGTH
+            BY REFERENCE A531-CODSOCIE
+            BY VALUE 0
+                     0
+
+           MOVE 8 TO SQL-STMT-ID 
+           MOVE 1 TO SQLDSIZE 
+           MOVE 3 TO SQLDA-ID 
+
+           CALL "sqlgaloc" USING
+               BY VALUE SQLDA-ID 
+                        SQLDSIZE
+                        SQL-STMT-ID
+                        0
+
+           MOVE 2 TO SQL-HOST-VAR-LENGTH
+           MOVE 452 TO SQL-DATA-TYPE
+           MOVE 0 TO SQLVAR-INDEX
+           MOVE 3 TO SQLDA-ID
+
+           CALL "sqlgstlv" USING 
+            BY VALUE SQLDA-ID
+                     SQLVAR-INDEX
+                     SQL-DATA-TYPE
+                     SQL-HOST-VAR-LENGTH
+            BY REFERENCE A531-SOCIEGTM
+            BY VALUE 0
+                     0
+
+           MOVE 3 TO SQL-OUTPUT-SQLDA-ID 
+           MOVE 2 TO SQL-INPUT-SQLDA-ID 
+           MOVE 4 TO SQL-SECTIONUMBER 
+           MOVE 24 TO SQL-CALL-TYPE 
+
+           CALL "sqlgcall" USING
+            BY VALUE SQL-CALL-TYPE 
+                     SQL-SECTIONUMBER
+                     SQL-INPUT-SQLDA-ID
+                     SQL-OUTPUT-SQLDA-ID
+                     0
+             IF SQLCODE IN SQLCA < 0 THEN
+               CALL "sqlgstop" USING
+                 BY VALUE 0
+               GO TO Z00-ERRORE
+             END-IF 
+
+           CALL "sqlgstop" USING
+            BY VALUE 0
+                                                                        
+000616                                                                  
+000617     IF SQLCODE = ZEROES                                          
+000618        MOVE 'U'                 TO PPROUTIN                      
+000619        MOVE 'D'                 TO PPTPFILE                      
+000620        MOVE 'R'                 TO PPTPOPER                      
+000621        MOVE 'SOCIETA'           TO PPNMFILE                      
+000622        PERFORM Z90-READPRIN                                      
+000623           THRU Z90-EX.                                           
+000624                                                                  
+000625 L50-EX. EXIT.                                                    
+000626*----------------------------------------------------------------*
+000627 W00-WRITE-NORDWEST.                                              
+000628*----------------------------------------------------------------*
+000629                                                                  
+000630     WRITE REC-NORDWEST        FROM FSNET03.                      
+000631                                                                  
+000632     MOVE 'U'                    TO PPROUTIN.                     
+000633     MOVE 'NORDWEST'             TO PPNMFILE.                     
+000634     MOVE 'U'                    TO PPTPOPER.                     
+000635     MOVE 'S'                    TO PPTPFILE.                     
+000636     PERFORM Z90-READPRIN                                         
+000637        THRU Z90-EX.                                              
+000638                                                                  
+000639 W00-EX. EXIT.                                                    
+000640*----------------------------------------------------------------*
+000641 W10-WRITE-FILEOUT.                                               
+000642*----------------------------------------------------------------*
+000643                                                                  
+000644     WRITE REC-FILEOUT         FROM FSNET09.                      
+000645                                                                  
+000646     MOVE 'U'                    TO PPROUTIN.                     
+000647     MOVE 'FILEOUT'              TO PPNMFILE.                     
+000648     MOVE 'U'                    TO PPTPOPER.                     
+000649     MOVE 'S'                    TO PPTPFILE.                     
+000650     PERFORM Z90-READPRIN                                         
+000651        THRU Z90-EX.                                              
+000652                                                                  
+000653 W10-EX. EXIT.                                                    
+000654*----------------------------------------------------------------*
+000655 W20-WRITE-FILECOS.                                               
+000656*----------------------------------------------------------------*
+000657                                                                  
+000658     IF N03-TPPRFATT(4:1) > ' '                                   
+000659        MOVE N03-TPPRFATT(6:5)   TO N09-NUMBOLLA.                 
+000660                                                                  
+000661                                                                  
+000662     WRITE REC-FILECOS         FROM FSNET09.                      
+000663                                                                  
+000664     MOVE 'U'                    TO PPROUTIN.                     
+000665     MOVE 'FILECOS'              TO PPNMFILE.                     
+000666     MOVE 'U'                    TO PPTPOPER.                     
+000667     MOVE 'S'                    TO PPTPFILE.                     
+000668     PERFORM Z90-READPRIN                                         
+000669        THRU Z90-EX.                                              
+000670                                                                  
+000671 W20-EX. EXIT.                                                    
+000672*----------------------------------------------------------------*
+000673 Z00-ERRORE.                                                      
+000674*----------------------------------------------------------------*
+000675                                                                  
+000676     MOVE 'M'                    TO PPROUTIN.                     
+000677     PERFORM Z90-READPRIN                                         
+000678        THRU Z90-EX.                                              
+000679                                                                  
+000680     MOVE 'SCDB2ER '             TO PPCALL.                       
+000681     CALL PPCALL                 USING DCPARM                     
+000682                                       DCDB2ER                    
+000683                                       SQLCA.                     
+000684 Z00-EX. EXIT.                                                    
+000685*----------------------------------------------------------------*
+000686 Z90-READPRIN.                                                    
+000687*----------------------------------------------------------------*
+000688                                                                  
+000689     MOVE 'READPRIN'             TO PPCALL                        
+000690     CALL PPCALL                 USING DCPARM.                    
+000691                                                                  
+000692 Z90-EX. EXIT.                                                   

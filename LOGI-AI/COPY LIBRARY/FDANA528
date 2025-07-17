@@ -1,0 +1,31 @@
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE DANAGRAF.TPAESI                    *
+      ******************************************************************
+       01  DCLTPAESI.
+           10 A528-CODPAESE        PIC X(3).
+           10 A528-CODILING        PIC X(1).
+           10 A528-PAESBANC        PIC X(3).
+           10 A528-PAESEISO        PIC X(2).
+           10 A528-FLPAECEE        PIC X(1).
+           10 A528-FLPAEORI        PIC X(1).
+           10 A528-DTCREAZI        PIC X(8).
+           10 A528-DTULTVAR        PIC X(8).
+           10 A528-CODUTVAR        PIC X(6).
+           10 A528-SLPAEGTM        PIC X(3).
+           10 A528-PRFINTER        PIC X(5).
+           10 A528-GRUPPAES        PIC X(2).
+           10 A528-CDMCAREG        PIC X(2).
+           10 A528-CDAREREG        PIC X(2).
+           10 A528-CDRAGCEN        PIC X(2).
+           10 A528-CDRAGTRA        PIC X(2).
+           10 A528-CDRAGFOC        PIC X(2).
+           10 A528-CODPAGVB        PIC X(3).
+           10 A528-SIGPAGVB        PIC X(2).
+           10 A528-CODPARUS        PIC X(3).
+           10 A528-CDRAGLIS        PIC X(2).
+           10 A528-CDRAGSTA        PIC X(2).
+           10 A528-CDRAGLIC        PIC X(2).
+           10 A528-CDRAGLIF        PIC X(2).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 24      *
+      ******************************************************************

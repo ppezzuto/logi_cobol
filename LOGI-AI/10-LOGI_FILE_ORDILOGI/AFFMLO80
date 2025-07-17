@@ -1,0 +1,117 @@
+//AFFMLO80 JOB (AI2PA,N),STATISTICA,
+//         COND=(4,LT),CLASS=Q,MSGCLASS=1,REGION=20M,USER=GESTMIR
+/*ROUTE PRINT MT
+//JOBLIB DD DSN=DB210L.V10R1M0.SDSNLOAD,DISP=SHR
+//* --------------------------------------------------
+//*      FILE CSV ORDILOGI
+//* --------------------------------------------------
+//STEP0000  EXEC PGM=IDCAMS
+//SYSPRINT DD  SYSOUT=*
+//SYSIN    DD  *
+ DELETE  SEMI.W010A.AFFMLO80                    SCRATCH PURGE
+ DELETE  SEMI.W020A.AFFMLO80                    SCRATCH PURGE
+ DELETE  SEMI.W030A.AFFMLO80.ORDILOGI           SCRATCH PURGE
+ IF MAXCC>=0 THEN SET LASTCC=0
+ IF LASTCC>=0 THEN SET MAXCC=0
+//*
+//* --------------------------------------------------
+//*      FILE CSV ORDILOGI (DA INIZIO ANNO)
+//* --------------------------------------------------
+//STEP0010 EXEC PGM=IKJEFT01,DYNAMNBR=20
+//*
+//STEPLIB  DD DSN=MIRO.BATCHLIB.MVS,DISP=SHR
+//*        DD DUMMY=STEPLIB.LIBERA
+//SYSUDUMP DD SYSOUT=H
+//SYSPRINT DD SYSOUT=1
+//SYSTSPRT DD SYSOUT=1
+//SYSTSIN  DD *
+ DSN SYSTEM(DB2M)
+ RUN PROGRAM(DSNVGF1) PLAN(DSNVGF1P) PARMS ('FB=80')
+//SYSOUT   DD DSN=SEMI.W010A.AFFMLO80,
+//            UNIT=3390,
+//            SPACE=(6144,(300,600),RLSE),
+//            DISP=(,CATLG,CATLG)
+//*
+//SYSIN    DD DSN=MIRO.LIB.QUERY(AFFML8T1),DISP=SHR
+//* --------------------------------------------------
+//STEP0020 EXEC PGM=IKJEFT01,DYNAMNBR=20
+//*
+//STEPLIB  DD DSN=MIRO.BATCHLIB.MVS,DISP=SHR
+//*        DD DUMMY=STEPLIB.LIBERA
+//SYSUDUMP DD SYSOUT=H
+//SYSPRINT DD SYSOUT=1
+//SYSTSPRT DD SYSOUT=1
+//SYSTSIN  DD *
+ DSN SYSTEM(DB2M)
+ RUN PROGRAM(DSNVGF1) PLAN(DSNVGF1P) PARMS ('FB=80')
+//SYSOUT   DD DSN=SEMI.W020A.AFFMLO80,
+//            UNIT=3390,
+//            SPACE=(6144,(300,600),RLSE),
+//            DISP=(,CATLG,CATLG)
+//*
+//SYSIN    DD DSN=MIRO.LIB.QUERY(AFFML8D1),DISP=SHR
+//* --------------------------------------------------
+//STEP0030 EXEC PGM=SORT
+//*
+//SYSOUT   DD SYSOUT=*
+//SORTIN   DD DSN=SEMI.W010A.AFFMLO80,DISP=SHR
+//         DD DSN=SEMI.W020A.AFFMLO80,DISP=SHR
+//SORTOUT  DD DSN=SEMI.W030A.AFFMLO80.ORDILOGI,
+//            UNIT=3390,
+//            SPACE=(6144,(150,300),RLSE),
+//            DCB=(LRECL=300,BLKSIZE=0,RECFM=FB),
+//            DISP=(,CATLG,DELETE)
+//SORTWK01 DD UNIT=SYSDA,SPACE=(6144,(600,600),RLSE)
+//SORTWK02 DD UNIT=SYSDA,SPACE=(6144,(600,600),RLSE)
+//SORTWK03 DD UNIT=SYSDA,SPACE=(6144,(600,600),RLSE)
+//SYSIN    DD *
+ OPTION COPY
+ END
+//* ------------------------------------------------------------
+//* SERVER FTP   : //10.20.129.15 (VAL-FS)
+//* CARTELLA     : U:\FtpdaHost\Dati_utente\CGestione\LOGISTICA
+//* RICHIEDENTE  : BERSANO LUCA
+//* FILE         : Ordilogi_aaaamm.csv
+//* FILE NEW     : Ordilogiaammgg.csv
+//* -----------------------------------------------------------
+//FTP      EXEC PGM=FTP,PARM='10.20.129.15 (EXIT=8'
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+mtftpuser
+MTFTPUSER
+CD DATI_UTENTE
+CD CGESTIONE
+CD LOGISTICA
+ASCII
+PUT 'SEMI.W030A.AFFMLO80.ORDILOGI' +
+          Ordilogi%%DATE.csv,LRECL=300
+QUIT
+/*
+//* ------------------------------------------------------------
+//* INVIO VIA MAIL
+//* RICHIEDENTI : stefano.ronco@miroglio.com
+//*               piermario.pastorelli@miroglio.com
+//*               cristina.casetta@miroglio.com
+//*               marco.giaccardi@miroglio.com
+//*               barbara.tontodonati@miroglio.com
+//*               simona.capozzolo@miroglio.com
+//*               silvia.oggero@miroglio.com
+//* IN CC       : stefano.careglio@miroglio.com
+//*               valerio.padovan@miroglio.com
+//*               christian.dantoni@miroglio.com
+//*               carla.cogno@miroglio.com
+//*               paolo.drago@miroglio.com
+//*               fabio.ballatore@miroglio.com
+//* FILE        : Ordilogi_aaaamm.csv
+//* FILE NEW    : Ordilogi_al_aaaamm.csv
+//* -----------------------------------------------------------
+//NORM0010 EXEC PGM=NORMFTP1
+//*        NORMALIZZA IL FILE ALLA LUNGHEZZA INDICATA
+//FTPIN    DD DSN=SEMI.W030A.AFFMLO80.ORDILOGI
+//FTPOUT   DD DSN=SEMI.W030A.AFFMLO80.ORDILOGI,
+//            LRECL=300
+//* --------------------------------------------------
+//DPXWAIT  EXEC PGM=DPXWAIT,PARM='000010'
+//MESSAG   DD SYSOUT=*,DCB=(LRECL=121)
+/*
+//* ------------------------------------------------------------

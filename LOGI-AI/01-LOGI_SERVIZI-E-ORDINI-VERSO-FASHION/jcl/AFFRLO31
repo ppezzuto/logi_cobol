@@ -1,0 +1,34 @@
+//AFFRLO31 JOB (AIEAA,N),LOGI,
+//         COND=(0,LT),CLASS=B,MSGCLASS=1,REGION=20M,USER=GESTMIR
+/*ROUTE PRINT MT                                                        00062905
+//JOBLIB DD DSN=DB210L.V10R1M0.SDSNLOAD,DISP=SHR
+//* -------------------------------------------------------------
+//*    LOGISTICA - TRASMETTE ORDINI A FASHION
+//* ---------------------------------------------------
+//*    PEZZO FINALE DELLA AFFRLO30 CANCELLA TEMPITRANS
+//*    (OROLOGIO A UTENTE)
+//* ---------------------------------------------------
+//*
+//*   VISTO COMPLESSITA' DEL GIRO DI SEGUITO ELENCO I JOBS CHE PARTONO:
+//*
+//*   GIRO COMPLETO ( PARTE DA RICHIESTA " 29 " SU CICS MT ) :
+//*
+//*   AFFRLO30 --> CC110U04 --> CC110U06 --> AFFRLO31
+//*   -JOB MT-     -JOB GVB-    -JOB GVB-    -JOB MT-
+//*
+//*
+//*                                        MARIO DESTEFANIS
+//*
+//* ---------------------------------------------------
+//STEP0999 EXEC PGM=IKJEFT01
+//*
+//SYSOUT   DD SYSOUT=1
+//SYSTSPRT DD SYSOUT=1
+//SYSPRINT DD SYSOUT=1
+//SYSTSIN  DD *
+ DSN SYSTEM(DB2M)
+ RUN PROGRAM(DSNTEP2) PLAN(DSNTEP10)
+ END
+//SYSIN   DD DSN=MIRO.LIB.QUERY(TEMPLO02),DISP=SHR
+//*
+//* ------------------------------------------------------------

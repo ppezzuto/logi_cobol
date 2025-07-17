@@ -1,0 +1,59 @@
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE DLOGISTI.TORDILOGI                 *
+      ******************************************************************
+       01  DCLTORDILOGI.
+      *                       AANUMORD
+           10 L652-AANUMORD        PIC X(8).
+      *                       CODCLIEN
+           10 L652-CODCLIEN        PIC X(5).
+      *                       CODSOCIE
+           10 L652-CODSOCIE        PIC X(2).
+      *                       CDDIVISI
+           10 L652-CDDIVISI        PIC X(1).
+      *                       DTCARORD
+           10 L652-DTCARORD        PIC X(8).
+      *                       CODDIVIS
+           10 L652-CODDIVIS        PIC X(2).
+      *                       TIPSERVI
+           10 L652-TIPSERVI        PIC X(1).
+      *                       FLAGAUTO
+           10 L652-FLAGAUTO        PIC X(1).
+      *                       FLAGGIVA
+           10 L652-FLAGGIVA        PIC X(1).
+      *                       CONTODCE
+           10 L652-CONTODCE        PIC X(6).
+      *                       DTEVAORD
+           10 L652-DTEVAORD        PIC X(8).
+      *                       AANUMFAT
+           10 L652-AANUMFAT        PIC X(8).
+      *                       DTFATTUR
+           10 L652-DTFATTUR        PIC X(8).
+      *                       NRPREATT
+           10 L652-NRPREATT        PIC X(10).
+      *                       DTPREATT
+           10 L652-DTPREATT        PIC X(8).
+      *                       DTCREAZI
+           10 L652-DTCREAZI        PIC X(8).
+      *                       DTULTVAR
+           10 L652-DTULTVAR        PIC X(8).
+      *                       CODUTVAR
+           10 L652-CODUTVAR        PIC X(6).
+      *                       DTANNULL
+           10 L652-DTANNULL        PIC X(8).
+      *                       SOCIEMER
+           10 L652-SOCIEMER        PIC X(2).
+      *                       DATAESTR
+           10 L652-DATAESTR        PIC X(8).
+      *                       AAMMCOMP
+           10 L652-AAMMCOMP        PIC X(6).
+      *                       FLAGSOSP
+           10 L652-FLAGSOSP        PIC X(1).
+      *                       CODUTEVB
+           10 L652-CODUTEVB        PIC X(6).
+      *                       ESENTIVA
+           10 L652-ESENTIVA        PIC X(1).
+      *                       FLORDIVB
+           10 L652-FLORDIVB        PIC X(1).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 26      *
+      ******************************************************************

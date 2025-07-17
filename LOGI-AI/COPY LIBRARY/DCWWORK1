@@ -1,0 +1,72 @@
+      *****************************************************************
+      ******            DATI DI USO GENERALE      (DCWWORK1)     ******
+      *****************************************************************
+
+       01  DCW-WORK1.
+
+      *----------------- NOME MAPPA CON GESTIONE CODICE LINGUA
+           05 WNOMEMAP.
+              10  FILLER                     PIC X(2).
+              10  WCODLING                   PIC X.
+              10  FILLER                     PIC X(4).
+
+      *----------------- COMODO LINEA CONTENENTE L'ULTIMO EXEC CICS
+           05 WLINEAXX.
+              10  EL-LINE    OCCURS 5        PIC X.
+
+      *----------------- COMODO CONTENENTE DFHEIV0
+           05 T-COMLINE.
+              10  EL-COMLINE OCCURS 29       PIC X.
+
+      *----------------- INDICE PER SCORRERE LA T-COMLINE.
+           05 INDERR                         PIC S9(5) COMP-3 VALUE +0.
+
+      *----------------- TRANSAZIONE IMPOSTATA AL MOMENTO DEL PF5 / PF4
+           05 WTRANSID                       PIC X(4) VALUE SPACES.
+
+      *----------------- INDICE DELLA RIGA DI MAPPA
+           05 WINDRIGA                       PIC S9(3) COMP-3 VALUE +0.
+
+      *----------------- NUMERO MASSIMO DI RIGHE IN UNA MAPPA
+           05 WNUMRIGA                       PIC 9(2)        VALUE 0.
+
+      *----------------- FLAG PER GLI ERRORI A LIVELLO DI DATI-MAPPA
+           05 WSWERROR                       PIC X      VALUE SPACES.
+              88 ERRORE                                 VALUE '*'.
+
+      *----------------- NUMERO PAGINA RICHIESTO
+           05 WPAGRICH                       PIC S9(5) COMP-3 VALUE +0.
+
+      *----------------- NUMERO RECORD CODA-TS
+           05 WNUMITEM                       PIC S9(4) COMP VALUE +0.
+
+      *----------------- INDICE DELLA CODA DI PAGINAZIONE TS
+           05 WPAGIPAG                       PIC S9(4) COMP VALUE +0.
+
+      *----------------- CHIAVE DELLA CODA DI PAGINAZIONE TS
+           05 WPAGCTRL.
+              10  WPAGNOME                   PIC X(4)    VALUE 'PAGI'.
+              10  WPAGVIDE                   PIC X(4).
+
+      *----------------- LUNGHEZZA  CODA DI PAGINAZIONE TS
+           05 WPAGLPAG                       PIC S9(4) COMP VALUE +0.
+
+      *----------------- ABSOLUTE TIME
+           05 WABSTIME                       PIC S9(15) COMP-3 VALUE +0.
+
+      *----------------- ABSOLUTE YEAR
+           05 WABSYEAR                       PIC S9(8) COMP VALUE +0.
+
+      *----------------- FOR RESP OPTION
+           05 WEIBRESP                       PIC S9(8) COMP VALUE +0.
+      *----------------- FOR CVDA  (CICS VALUE DATA AREA)
+           05 WNOLOG                         PIC S9(8) COMP VALUE +0.
+           05 WCVDA                          PIC S9(8) COMP VALUE +0.
+           05 WCVDA-OPEN                     PIC S9(8) COMP VALUE +18.
+           05 WCVDA-CLOSED                   PIC S9(8) COMP VALUE +19.
+      *----------------- FOR BIF DEEDIT
+           05 WWTWSNU                        PIC X(8) VALUE 'WWTWSNU'.
+           05 WLENGTH                        PIC S9(4) COMP.
+      *----------------- AREA DELLA CODA TS DI PAGINAZIONE
+       01  WPAGREFE.
+           05  FILLER                        PIC X    VALUE SPACES.

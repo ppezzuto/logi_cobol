@@ -1,0 +1,52 @@
+      ******************************************************************
+      * DCLGEN TABLE(DLOGISTI.TLISTILOGI)                              *
+      *        LIBRARY(MTTEST.SOURCE.LIBTEST(FDLOG654))                *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(L654-)                                            *
+      *        QUOTE                                                   *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE DLOGISTI.TLISTILOGI TABLE
+           ( CODCLIEN                       CHAR(5) NOT NULL,
+             DTINILIS                       CHAR(6) NOT NULL,
+             DTFINLIS                       CHAR(6) NOT NULL,
+             CODSERVI                       CHAR(6) NOT NULL,
+             TIPSERVI                       CHAR(1) NOT NULL,
+             CODDIVIS                       CHAR(2) NOT NULL,
+             PREZZLIS                       DECIMAL(11, 4) NOT NULL,
+             PERCLIST                       DECIMAL(5, 2) NOT NULL,
+             DTCREAZI                       CHAR(8) NOT NULL,
+             DTULTVAR                       CHAR(8) NOT NULL,
+             CODUTVAR                       CHAR(8) NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE DLOGISTI.TLISTILOGI                *
+      ******************************************************************
+       01  DCLTLISTILOGI.
+      *                       CODCLIEN
+           10 L654-CODCLIEN        PIC X(5).
+      *                       DTINILIS
+           10 L654-DTINILIS        PIC X(6).
+      *                       DTFINLIS
+           10 L654-DTFINLIS        PIC X(6).
+      *                       CODSERVI
+           10 L654-CODSERVI        PIC X(6).
+      *                       TIPSERVI
+           10 L654-TIPSERVI        PIC X(1).
+      *                       CODDIVIS
+           10 L654-CODDIVIS        PIC X(2).
+      *                       PREZZLIS
+           10 L654-PREZZLIS        PIC S9(7)V9(4) USAGE COMP-3.
+      *                       PERCLIST
+           10 L654-PERCLIST        PIC S9(3)V9(2) USAGE COMP-3.
+      *                       DTCREAZI
+           10 L654-DTCREAZI        PIC X(8).
+      *                       DTULTVAR
+           10 L654-DTULTVAR        PIC X(8).
+      *                       CODUTVAR
+           10 L654-CODUTVAR        PIC X(8).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 11      *
+      ******************************************************************

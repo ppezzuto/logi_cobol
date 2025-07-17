@@ -1,0 +1,29 @@
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE DLOGISTI.TSERVIZI                  *
+      ******************************************************************
+       01  DCLTSERVIZI.
+      *                       CODSERVI
+           10 L651-CODSERVI        PIC X(6).
+      *                       DESSERVI
+           10 L651-DESSERVI        PIC X(40).
+      *                       UNMISURA
+           10 L651-UNMISURA        PIC X(2).
+      *                       TIPSERVI
+           10 L651-TIPSERVI        PIC X(1).
+      *                       DTCREAZI
+           10 L651-DTCREAZI        PIC X(8).
+      *                       DTULTVAR
+           10 L651-DTULTVAR        PIC X(8).
+      *                       CODUTVAR
+           10 L651-CODUTVAR        PIC X(6).
+      *                       CONTODCD
+           10 L651-CONTODCD        PIC X(6).
+      *                       CONTODCA
+           10 L651-CONTODCA        PIC X(6).
+      *                       CENCOSTA
+           10 L651-CENCOSTA        PIC X(5).
+           10 L651-ESENTIVA        PIC X(1).
+           10 L651-CONTPROV        PIC X(6).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 12      *
+      ******************************************************************

@@ -1,0 +1,58 @@
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE DANAGRAF.TSOCIETA                  *
+      ******************************************************************
+       01  DCLTSOCIETA.
+           10 A531-CODSOCIE        PIC X(2).
+           10 A531-NOMSOCIE        PIC X(23).
+           10 A531-CODFORNI        PIC X(5).
+           10 A531-TASSINTE        PIC S9(3)V9(2) USAGE COMP-3.
+           10 A531-CODPAESE        PIC X(3).
+           10 A531-NRGGRISC        PIC S9(3)V USAGE COMP-3.
+           10 A531-CODPIANO        PIC X(2).
+           10 A531-CITTASOC        PIC X(18).
+           10 A531-FLPAGIVA        PIC X(1).
+           10 A531-FLFATACQ        PIC X(1).
+           10 A531-CODAZIEN        PIC X(5).
+           10 A531-FLIVATRA        PIC X(1).
+           10 A531-CODDIVIS        PIC X(2).
+           10 A531-COSTINTE        PIC S9(3)V9(2) USAGE COMP-3.
+           10 A531-FLCONTAB        PIC X(1).
+           10 A531-FLAGMAGA        PIC X(1).
+           10 A531-RAGSOCIE        PIC X(50).
+           10 A531-SOCIECON        PIC X(2).
+           10 A531-DTCREAZI        PIC X(8).
+           10 A531-DTULTVAR        PIC X(8).
+           10 A531-CODUTVAR        PIC X(6).
+           10 A531-INDLEGAL        PIC X(35).
+           10 A531-CAPLEGAL        PIC X(5).
+           10 A531-CITLEGAL        PIC X(18).
+           10 A531-CODFISCA        PIC X(16).
+           10 A531-CODDIVRI        PIC X(2).
+           10 A531-SOCIEGTM        PIC X(2).
+           10 A531-GENEFATT        PIC X(1).
+           10 A531-FLAGATTI        PIC X(1).
+           10 A531-DIVISOLD        PIC X(2).
+           10 A531-DTFINOLD        PIC X(8).
+           10 A531-DIVRIOLD        PIC X(2).
+           10 A531-DIVIRIFA        PIC X(2).
+           10 A531-FLEURUSA        PIC X(1).
+           10 A531-FLAGLIMI        PIC X(1).
+           10 A531-FLFILIAL        PIC X(1).
+           10 A531-FLPRESEN        PIC X(1).
+           10 A531-CODSOCPA        PIC X(1).
+           10 A531-FLBOLGVB        PIC X(1).
+           10 A531-FLSTCART        PIC X(1).
+           10 A531-FLDIPEST        PIC X(1).
+           10 A531-CODFIRMA        PIC X(8).
+           10 A531-DESFIRMA        PIC X(24).
+           10 A531-CDSOCJDE        PIC X(5).
+           10 A531-CODFORNV        PIC X(5).
+           10 A531-CODFORNA        PIC X(5).
+           10 A531-IMPCCASO        PIC S9(13) COMP-3.
+           10 A531-TRIBCCIA        PIC X(10).
+           10 A531-PROLEGAL        PIC X(2).
+           10 A531-FLSOCSAP        PIC X(1).
+           10 A531-DIVIXLAV        PIC X(2).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 51      *
+      ******************************************************************

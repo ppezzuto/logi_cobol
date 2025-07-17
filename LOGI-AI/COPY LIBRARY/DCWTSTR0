@@ -1,0 +1,12 @@
+      *------------------------------------- -------------------------*
+      *                    --- DCWTSTR0 ---                           *
+      *              DSECT PER SALVATAGGIO COMMAREA.                  *
+      *---------------------------------------------------------------*
+       01  DCWTSTR0.
+           05  TSTR-LENGCODA               PIC S9(4)  COMP VALUE +4096.
+           05  TSTR-ITEMXXXX               PIC S9(4)  COMP VALUE +0.
+           05  TSTR-NOMECODA.
+               10  TSTR-NOMETRAN           PIC X(4)   VALUE SPACES.
+               10  TSTR-NOMETERM           PIC X(4)   VALUE SPACES.
+           05  TSTR-AREATSTR               PIC X(4096) VALUE SPACES.
+      *---------------------------------------------------------------*

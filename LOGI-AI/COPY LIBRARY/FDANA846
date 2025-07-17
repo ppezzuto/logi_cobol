@@ -1,0 +1,31 @@
+      ******************************************************************
+      * DCLGEN TABLE(DANAGRAF.TMESSAGGI)                               *
+      *        LIBRARY(MTTEST.SOURCE.LIBTEST(FDANA846))                *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE DANAGRAF.TMESSAGGI TABLE
+           ( CODERROR                       CHAR(5) NOT NULL,
+             CODILING                       CHAR(1) NOT NULL,
+             MSGERROR                       CHAR(60) NOT NULL,
+             TIPOMESS                       CHAR(1) NOT NULL,
+             DTCREAZI                       CHAR(8) NOT NULL,
+             DTULTVAR                       CHAR(8) NOT NULL,
+             CODUTVAR                       CHAR(6) NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE DANAGRAF.TMESSAGGI                 *
+      ******************************************************************
+       01  DCLTMESSAGGI.
+           10 A846-CODERROR        PIC X(5).
+           10 A846-CODILING        PIC X(1).
+           10 A846-MSGERROR        PIC X(60).
+           10 A846-TIPOMESS        PIC X(1).
+           10 A846-DTCREAZI        PIC X(8).
+           10 A846-DTULTVAR        PIC X(8).
+           10 A846-CODUTVAR        PIC X(6).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 7       *
+      ******************************************************************

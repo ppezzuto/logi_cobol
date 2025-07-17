@@ -1,0 +1,36 @@
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE DANAGRAF.TDIVISE                   *
+      ******************************************************************
+       01  DCLTDIVISE.
+      *                       SIGLADIV
+           10 A963-SIGLADIV        PIC X(3).
+      *                       CAMBIODV
+           10 A963-CAMBIODV        PIC S9(5)V9(6) USAGE COMP-3.
+      *                       DESCDIVI
+           10 A963-DESCDIVI        PIC X(20).
+      *                       CODDIVIS
+           10 A963-CODDIVIS        PIC X(2).
+      *                       DECIDIVI
+           10 A963-DECIDIVI        PIC X(1).
+      *                       DIVIBANC
+           10 A963-DIVIBANC        PIC X(3).
+      *                       DIVIPREZ
+           10 A963-DIVIPREZ        PIC X(1).
+      *                       CODDIVRI
+           10 A963-CODDIVRI        PIC X(2).
+      *                       RAPPCAMB
+           10 A963-RAPPCAMB        PIC S9(5)V USAGE COMP-3.
+      *                       CODDIGTM
+           10 A963-CODDIGTM        PIC X(2).
+      *                       FLAGEURO
+           10 A963-FLAGEURO        PIC X(1).
+      *                       SLDIVBAN
+           10 A963-SLDIVBAN        PIC X(3).
+      *                       CDDIVSCA
+           10 A963-CDDIVSCA        PIC X(2).
+      *                       FLDIVINT
+           10 A963-FLDIVINT        PIC X(1).
+           10 A963-VBDIVSCA        PIC X(2).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 15      *
+      ******************************************************************

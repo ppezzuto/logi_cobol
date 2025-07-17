@@ -1,0 +1,122 @@
+      *---------------------------------------------------------------*
+      *----*            AREA DI PASSAGGIO DATI - WWTERRE         *----*
+      *---------------------------------------------------------------*
+
+       01  WCOM-LUNGHERR                PIC S9(4) COMP VALUE +200.
+       01  WCOM-AREA-ERROR.
+           02 FILLER                    PIC X(8) VALUE 'CICSERRO'.
+           02 WCOM-FILEMESG.
+              04 WCOM-FILEFUNZ          PIC X(10).
+              04 WCOM-FILESTAT          PIC X(5).
+              04 WCOM-SQLCODEX REDEFINES WCOM-FILESTAT
+                                        PIC -Z(4).
+              04 WCOM-FILENOME          PIC X(30).
+              04 WCOM-FILECTR1.
+                 05 WCOM-FILECTRL       PIC X(35).
+           02 WCOM-MESSAGE1 REDEFINES WCOM-FILEMESG.
+              05 WCOM-MESSAGES          PIC X(80).
+
+           02 WCOM-CODABEND             PIC X(4).
+           02 WCOM-ABENCICS             PIC X(4).
+           02 WCOM-PRGMLINE             PIC X(5)  VALUE SPACES.
+           02 WCOM-CODEIBFN             PIC X(2).
+           02 WCOM-CODERCOD             PIC X(6).
+           02 FILLER                    PIC X(91).
+
+
+      *---------------------------------------------------------------*
+      *----*                AREA DI COMMAREA                     *----*
+      *---------------------------------------------------------------*
+
+      *---------------------- LUNGHEZZA WCOM-AREAXXXX
+       01  WCOM-LUNGHEZZ                     PIC S9(4) COMP VALUE +300.
+
+      *---------------------- NOME DEL PROGRAMMA
+       01  WCOM-AREAXXXX.
+           05  WCOM-NOMEPRGM                 PIC X(8)  VALUE SPACES.
+
+      *---------------------- PAGINA RICHIESTA
+           05  WCOM-PAGIRICH                 PIC S9(5) COMP-3.
+
+      *---------------------- PAGINA LISTATA
+           05  WCOM-PAGILIST                 PIC S9(5) COMP-3.
+
+      *---------------------- PAGINA ULTIMA
+           05  WCOM-PAGIULTI                 PIC S9(5) COMP-3.
+
+      *---------------------- FLAG PER MODULO GESTIONE FUNZIONI ESTERNE
+           05  WCOM-FLAGFUNZ.
+               10  WCOM-RETURNXX             PIC X(1).
+               10  WCOM-DELETETS             PIC X(1).
+               10  WCOM-CODILING             PIC X(1).
+
+      *---------------------- FLAG PER AGGIORNAMENTI
+           05  WCOM-FLAGPRGM                 PIC X(1)  VALUE SPACES.
+
+      *---------------------- SOTTOSISTEMA CICS
+           05  WCOM-SYSID                    PIC X(4)  VALUE '????'.
+
+      *---------------------- PRINTER ABBINATA CON 'P'
+           05  WCOM-PRINTERX                 PIC X(4).
+
+      *---------------------- PRINTER ASSOCIATA MAG. FINITI
+           05  WCOM-PRINTERY                 PIC X(4).
+
+      *---------------------- PRINTER ASSOCIATA ALLA TRANSAZIONE
+           05  WCOM-PRINTERT                 PIC X(4).
+
+      *---------------------- PRINTER BAR-CODE O MODULI SPECIALI
+           05  WCOM-PRINTERB                 PIC X(4).
+
+      *---------------------- TRANSAZIONE
+           05  WCOM-TRANSAZI                 PIC X(4).
+
+      *---------------------- DATA DEL GIORNO DA MENU'
+           05  WCOM-DATAXXXX.
+               10  WCOM-DATAGGXX             PIC X(2).
+               10  WCOM-DATAGGXN REDEFINES WCOM-DATAGGXX  PIC 9(2).
+               10  WCOM-BARRAUNO             PIC X(1).
+               10  WCOM-DATAMMXX             PIC X(2).
+               10  WCOM-DATAMMXN REDEFINES WCOM-DATAMMXX  PIC 9(2).
+               10  WCOM-BARRADUE             PIC X(1).
+               10  WCOM-DATAAAXX.
+                   15 WCOM-DATAAAX1          PIC 9(1).
+                   15 WCOM-DATAAAX2          PIC 9(1).
+               10  WCOM-DATAAAXN REDEFINES WCOM-DATAAAXX  PIC 9(2).
+
+      *---------------------- NOME DELLA CODA TS GENERICA
+           05  WCOM-CODATSXX.
+               10 WCOM-CODATSX1              PIC X(4)  VALUE SPACES.
+               10 WCOM-CODATSX2              PIC X(4)  VALUE SPACES.
+
+      *---------------------- DATA DEL GIORNO
+           05  WCOM-DTCREAZI.
+               10 WCOM-DTCREAZI-SY.
+                  15 WCOM-DTCREAZI-SS        PIC X(2).
+                  15 WCOM-DTCREAZI-YY        PIC X(2).
+               10 WCOM-DTCREAZI-SYN REDEFINES WCOM-DTCREAZI-SY PIC 9(4).
+               10 WCOM-DTCREAZI-MM           PIC X(2).
+               10 WCOM-DTCREAZI-DD           PIC X(2).
+
+      *---------------------- CODICE UTENTE
+           05  WCOM-UTENCICS                 PIC X(6).
+
+      *---------------------- TRANSAZIONI NELL' AMBITO DELLA RICHIESTA
+           05  WCOM-INDITRAN                 PIC 9(2).
+           05  WCOM-TABETRAN.
+               10  WCOM-MENUTRAN  OCCURS 10  PIC X(4).
+               10  WCOM-PAGITRAN  OCCURS 10  PIC S9(5) COMP-3.
+
+      *---------------------- FLAG AVVISI UTENTI/TRANSAZIONI DA SCTUTENT
+           05  WCOM-FLAGUTEN                 PIC X(1).
+           05  WCOM-FLAGTRAN                 PIC X(1).
+
+      *---------------------- FLAG UTENTI LIMITATI
+           05  WCOM-FLAGLIMI                 PIC X(1).
+
+      *---------------------- LIBERI
+           05  FILLER                        PIC X(25).
+
+      *---------------------- RICHIESTA
+           05  WCOM-RIKIESTA.
+               10   WCOM-COMODOXX            PIC X(125).
